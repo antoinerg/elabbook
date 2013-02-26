@@ -1,4 +1,4 @@
-source :rubygems
+source "https://rubygems.org"
 
 gem "sinatra"
 gem "sinatra-contrib"
@@ -14,4 +14,3 @@ gem "amqp"
 gem "em-websocket"
 gem "uuid"
 gem "foreman"
-gem "yaml"
