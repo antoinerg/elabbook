@@ -1,0 +1,35 @@
+<div class="onecol">
+<% for image in %w(drive_amplitude_f.svg dissipation_f.svg)  || [] %>
+<figure>
+	<object type="image/svg+xml" data="<%=settings.file_server + File.join(@image_dir,"#{@filename}.#{image}").gsub(settings.dir,'')%>">Your browser does not support SVG</object>
+</figure>
+<% end %>
+
+<%= @xml.xpath('/SPM/UserData/pressure')[0] || '#'%>
+
+<% fits = @xml.xpath('/SPM/Package/UserChannel[Name = "forward dissipation | InteractiveFit session"]/UserData/Fit')%>
+<table>
+	<tr>
+		<th>Vo</th>
+		<th>b</th>
+		<th>beta</th>
+		<th>c</th>
+	</tr>
+	<% fits.each do |fit| %>
+	<tr>
+		<% fit.children.each do |parameter| %>
+			<td><%= parameter.content %></td>
+		<% end %>
+	</tr>
+	<% end %>
+</table>
+
+</div>
+
+<div class="onecol last">
+<% for image in %w(delta_frequency_shift.svg corrected_delta_frequency_shift.svg)  || [] %>
+<figure>
+	<object type="image/svg+xml" data="<%=settings.file_server + File.join(@image_dir,"#{@filename}.#{image}").gsub(settings.dir,'')%>">Your browser does not support SVG</object>
+</figure>
+<% end %>
+</div>

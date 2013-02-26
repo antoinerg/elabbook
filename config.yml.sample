@@ -1,0 +1,7 @@
+dir: /path/to/folder/
+file_server: http://your.cdn.com/
+
+rabbitmq:
+  host: my.rabbitmq.broker.com
+  user: user
+  password: pass

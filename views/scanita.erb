@@ -1,0 +1,126 @@
+<div class="row header">
+	<div class="onecol">
+		<p class="meta">
+			<time datetime="<%= @datetime.to_s %>">
+			  <span class="day"><%= @datetime.day %></span>
+			  <span class="month"><%= Date::MONTHNAMES[@datetime.month] %></span>
+			  <span class="year"><%= @datetime.year %></span>
+			</time>
+		</p>
+		<h1 class="entry-title"><%= @filename %></h1>
+	</div>
+
+	<div class="onecol last">
+		<ul id="parameters">
+			<li><%= @xml.xpath('/SPM/UserData/pressure')[0] || '#'%> mbar</li>
+			<li><%= @xml.xpath('/SPM/UserData/temperature')[0] || '#'%>K</li>
+			<li><%= @xml.xpath('/SPM/Package/Header/Bias')[0] || '#' %>V</li>
+			<li><%= @xml.xpath('/SPM/UserData/oscillation/amplitude')[0] || '#'%> nm</li>
+		</ul>
+	</div>
+</div>
+
+<script>
+$(document).ready(function() {
+	var send = function(cmd) {
+		$.ajax({
+		  type: "POST",
+		  url: '/rabbitmq/matlab',
+		  data: cmd,
+		  success: function(msg) {console.log('Sent ' + cmd)},
+		  error: function(e) {console.log('Error')}
+		});
+	}
+	
+	$('#regenerate_figure').click(function() {
+		var cmd = "run_function('make_figure','<%=@path%>')"
+		send(cmd);
+	});
+	
+	$('#regenerate_xml').click(function() {
+		var cmd = "run_function('make_xml','<%=@path%>')"
+		send(cmd);
+	});
+	
+	$('#analyze_dissipation').click(function() {
+		var cmd = "run_function('analyze_dissipation','<%=@path%>')"
+		send(cmd);
+	});
+	
+	$('#analyze_fshift').click(function() {
+		var cmd = "run_function('analyze_fshift','<%=@path%>')"
+		send(cmd);
+	});
+
+	var socket = new WebSocket('ws://localhost:8080/');
+	window.socket = socket;
+	socket.onmessage = function (evt) 
+     	{ 
+        	var received_msg = evt.data;
+        	console.log(received_msg);
+     	};
+});
+</script>
+<div class="row header noprint">
+	<button id="regenerate_figure">Regenerate figure</button>
+	<button id="regenerate_xml">Regenerate XML</button>
+	<button id="analyze_dissipation">Analyze dissipation</button>
+	<button id="analyze_fshift">Analyze frequency shift</button>
+</div>
+
+<div style="row">
+<%= erb "scanita/#{@type.gsub(' ','_')}".downcase.to_sym %>
+</div>
+
+<div class="row noprint">
+	<div class="twocol">
+	<h2>XML</h2>
+	<div id="editor"></div>
+
+	<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		$(document).ready(function() {
+	    var editor = ace.edit("editor");
+	    editor.setTheme("ace/theme/textmate");
+	    editor.getSession().setMode("ace/mode/xml");
+	
+		// Loading file
+		$.ajax({
+		  type: "GET",
+		  url: '/api<%=@path%>.xml',
+		  success: function(data) {editor.getSession().setValue(data);editor.blur();}
+		});
+		
+		// Quick save
+		editor.commands.addCommand({
+		    name: 'save',
+		    bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+		    exec: function(editor) {
+		      $.ajax({
+			    type: "PUT",
+			    url: '/api<%=@path%>.xml',
+			    data: editor.getSession().getValue(),
+			    success: function(data) {console.log('Saved')}
+			}); 
+		    }
+		});
+		})
+	</script>
+	</div>
+</div>
+
+<script type="text/javascript">
+		var isAlt = true;
+
+		$(document).keyup(function (e) {
+			if(e.which == 18) isAlt=false;
+		}).keydown(function (e) {
+			if(e.which == 18) isAlt=true;
+			if(e.which == 39) {
+				window.location.assign('<%= @next_url || '#' %>');
+			}
+			if(e.which == 37) {
+				window.location.assign('<%= @previous_url || '#' %>');
+			}
+		});
+</script>

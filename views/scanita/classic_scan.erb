@@ -1,0 +1,6 @@
+<style>figure {width:33%;float:left;}</style>
+<% for image in @images || [] %>
+<figure>
+	<object type="image/svg+xml" data="<%=settings.file_server + image%>">Your browser does not support SVG</object>
+</figure>
+<% end %>

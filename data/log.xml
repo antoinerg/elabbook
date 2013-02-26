@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log>
+	<experiment/>
+	<sample type="integer">99</sample>
+	<title>C16S2 (4 days) + Successive dippings in 2nm Au NPs</title>
+	<date>2011-11-14</date>
+	<procedure>
+		<substrate>TSG</substrate>
+		<step id="1">
+			<type>C16S2</type>
+			<concentration>1mM</concentration>
+			<time>P4D</time>
+		</step>
+		<step id="2">
+			<type>2nm Au NPs - successive dipping</type>
+			<concentration>250nM</concentration>
+			<time>PT1M</time>
+			<comment>Sample exposed to air prior to this step</comment>
+		</step>
+	</procedure>
+	<cleaning>Rinsed with ethanol and blow dry with N2</cleaning>
+	<comments><comment>Used C16S2 that was dilluted on 2012-11-11</comment></comments>
+</log>

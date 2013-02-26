@@ -1,0 +1,8 @@
+text {
+	font-size:14px;
+}
+
+g#ID000010 text {
+	font-size:10px;
+	-webkit-transform: translate(5px,0);
+}

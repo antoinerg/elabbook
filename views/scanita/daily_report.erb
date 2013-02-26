@@ -1,0 +1,25 @@
+<div class="row header">
+	<div class="onecol">
+		<h1 class="entry-title"><%=@datetime.day%> <%=Date::MONTHNAMES[@datetime.month]%> <%=@datetime.year%></h1>
+	</div>
+
+	<div class="onecol last">
+		<ul id="parameters">
+			<li><%= @xmls.size %> files</li>
+		</ul>
+	</div>
+</div>
+
+<div class="row">
+<ul class="timelist">
+<% for xml in @xmls %>
+  <% date = DateTime.iso8601(xml.xpath('/SPM/Package/Date').first.content) %>
+  <li>
+	<a href="raw/<%=xml.xpath('/SPM/Package/Filename').first.content%>">
+	<div class="time"><h3><%= date.hour %>:<%= sprintf('%02d',date.minute) %></h3></div>
+	<div class="desc"><h3><%=xml.xpath('/SPM/Package/Type').first.content%> - <%=xml.xpath('/SPM/Package/Filename').first.content%></h3></div>
+	</a>
+</li>
+<% end %>
+</ul>
+</div>
