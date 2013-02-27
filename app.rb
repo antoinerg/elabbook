@@ -4,6 +4,7 @@ require "sinatra/config_file"
 
 require 'json'
 require 'nokogiri'
+require 'nori'
 require 'date'
 
 class Elabbook < Sinatra::Base
@@ -19,15 +20,26 @@ get '/data/lt-afm/scanita/*/:name.sdf' do
   @xml_path = File.join(settings.dir,@path + ".xml")
   if File.exist?(@xml_path)
     Dir.chdir(@folder) do
-      @xml = Nokogiri::XML(File.read(@xml_path),&:xinclude)
+      @xml = Nokogiri::XML(File.read(@xml_path),&:noblanks)
       @datetime = DateTime.iso8601(@xml.xpath('/SPM/Package/Date').first.content)
       @type = @xml.xpath('/SPM/Package/Type').first.content
+      @hash = @xml.xpath('/SPM/Package/Hash').first.content
     end
   end
 
   # Loading images
   @image_dir=File.join(@folder,'..','img')
-  @images = Dir.entries(@image_dir)[2..-1].sort.select {|f| f.match("#{@filename}.*svg$")}.collect {|f| File.join(@image_dir,f).gsub(settings.dir,'')}
+  if File.directory?(@image_dir)
+  	@images = Dir.entries(@image_dir)[2..-1].sort.select {|f| f.match("#{@filename}.*xml$")}
+    	#parser = Nori.new
+	Dir.chdir(@image_dir) do
+		@images.collect! do |img_xml|
+			Nokogiri::XML(File.read(img_xml),&:noblanks)
+		end
+	end
+  else
+	@images = [];
+  end
   
   # Provide link to next data file in same folder
   files = Dir.entries(@folder)[2..-1].sort.keep_if {|f| f.match(/.*sdf$/)}
@@ -94,7 +106,8 @@ end
 get '*' do
   path = path(params[:splat] || '')
   if File.directory?(path)
-    @folders = list_file(path)  
+    @folders = list_file(path)
+    @path = params[:splat][0] 
     erb :index, :layout => :html5
   else
     redirect settings.file_server + path.gsub(settings.dir,'')

@@ -14,3 +14,5 @@ gem "amqp"
 gem "em-websocket"
 gem "uuid"
 gem "foreman"
+
+gem "nori"

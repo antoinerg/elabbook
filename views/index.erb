@@ -1,5 +1,25 @@
-<ul>
+<div class="row header">
+	<div class="twocol">
+	<h1 class="entry-title">
+	<% loc="/" %>
+	<% (@path.split('/')[1..-1] || [""]).each do |d|%>
+		<a style="color:black;" href="<%=loc + d%>"><%=d%></a>/
+		<% loc = loc + d + '/'%>
+	<% end %>
+	</h1>
+	</div>
+
+</div>
+
+<div class="row">
+<ul class="timelist">
 <% for folder in @folders %>
-<li><a href="/<%=folder%>"><%=folder%></a></li>
+  <li>
+	<a href="/<%=folder%>">
+	<div class="time"></div>
+	<div class="desc"><h3><%=folder%></h3></div>
+	</a>
+</li>
 <% end %>
 </ul>
+</div>

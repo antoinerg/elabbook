@@ -1,6 +1,24 @@
 <style>figure {width:33%;float:left;}</style>
-<% for image in @images || [] %>
-<figure>
-	<object type="image/svg+xml" data="<%=settings.file_server + image%>">Your browser does not support SVG</object>
-</figure>
+
+<% path = settings.file_server + @folder.gsub(settings.dir,'') + "../img/" %>
+<% %w(Forward Backward).each do |direction| %>
+<div class="row">
+<div class="twocol">
+<h2><%= direction %></h2>
+<% ['topography', 'deflection', 'drive amplitude'].each do |name| %>
+	<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name && f.xpath('/SPM/Viewer/View/Direction').first.content == direction}.first %>
+	<% if channel %>
+		<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
+		<figure>
+			<figcaption><%= channel.xpath('/SPM/Viewer/View/Name').first.content %></figcaption>
+			<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
+		</figure>
+	<% end %>
 <% end %>
+</div>
+</div>
+<% end %>
+
+
+
+

@@ -6,10 +6,10 @@ div.container {
 }
 
 body {
-font-family: 'Helvetica', 'Open Sans';
+font-family: 'HelvLight', 'Helvetica', 'Arial', 'Open Sans';
 color: #000;
 font-size:12px;
-font-weight:100;
+font-weight:300;
 }
 
 #editor { 
@@ -19,6 +19,7 @@ font-weight:100;
 }
 
 h1 {font-size:24px;}
+h1 a:link {text-decoration:none}
 h2 {font-size:20px;margin-top:10px;margin-bottom:10px}
 
 .header {border-bottom:1px solid #eee; padding-bottom:10px}
@@ -72,7 +73,7 @@ button:active {
 
 ul.timelist h3 {
 border-bottom: 1px solid #ddd;
-color: #AAA;
+color: #333;
 font-size:18px;
 margin-bottom:10px;
 padding-bottom:3px;
@@ -113,6 +114,12 @@ ul#parameters li {
   padding:5px;	
   line-height:30px;
   
+}
+
+figcaption {
+  text-transform:capitalize;
+  text-align:center;
+  margin-bottom:5px;
 }
 
 
