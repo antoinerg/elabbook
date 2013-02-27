@@ -20,8 +20,14 @@ EventMachine.run do
   reply_queue.subscribe(:ack => true) do |metadata,payload|
     corr_id = metadata.correlation_id
     if corr_id
+      begin
+      reply=JSON.parse(payload).merge({:correlation_id => corr_id})
       ws=@RPC.delete(corr_id)
-      ws.send ({:code => 0,:correlation_id => corr_id, :data => JSON.parse(payload)}).to_json if ws
+      ws.send reply.to_json if ws
+      rescue JSON::ParserError => e
+ws.send ({:correlation_id =>
+ corr_id, :code => 1, :message =>"Malformed JSON from Matlab"}).to_json if ws
+      end
     end
     metadata.ack
   end
@@ -44,12 +50,11 @@ EventMachine.run do
         request = JSON.parse(msg)
         corr_id = request["correlation_id"] || UUID.generate
 	command = request["command"]
-	puts command
-        exchange.publish(request["command"], :routing_key => 'matlab',:reply_to => 			reply_queue.name, :correlation_id => corr_id)
+        exchange.publish(request["command"], :routing_key => 'matlab',:reply_to => reply_queue.name, :correlation_id => corr_id)
       	@RPC[corr_id] = ws
       rescue JSON::ParserError => e
-	puts e
-        ws.send '{"code":1,"message":"Malformed JSON"}'
+        ws.send ({:correlation_id =>
+ corr_id, :code => 1, :mesasge =>"Malformed JSON"}).to_json
       end
     end
   end
