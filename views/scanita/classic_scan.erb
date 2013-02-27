@@ -5,7 +5,7 @@
 <div class="row">
 <div class="twocol">
 <h2><%= direction %></h2>
-<% ['topography', 'deflection', 'drive amplitude'].each do |name| %>
+<% ['topography', 'frequency shift', 'drive amplitude'].each do |name| %>
 	<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name && f.xpath('/SPM/Viewer/View/Direction').first.content == direction}.first %>
 	<% if channel %>
 		<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
