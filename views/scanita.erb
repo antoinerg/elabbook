@@ -14,7 +14,7 @@
 		<ul id="parameters">
 			<li><%= @xml.xpath('/SPM/UserData/pressure')[0] || '#'%> mbar</li>
 			<li><%= @xml.xpath('/SPM/UserData/temperature')[0] || '#'%>K</li>
-			<li id="voltage"><%= @xml.xpath('/SPM/Package/Header/Bias')[0] || '#' %>V</li>
+			<li><%= b=@xml.at_xpath('/SPM/BotData/average_bias'); b ? b.content.to_f.round(4) : '#' %>V</li>
 			<li><%= @xml.xpath('/SPM/UserData/oscillation/amplitude')[0] || '#'%> nm</li>
 		</ul>
 	</div>
@@ -33,8 +33,8 @@ $(document).ready(function() {
 		humanMsg.displayMsg(el.html());
 		var id = s4();
 		socket.send(JSON.stringify({"correlation_id":id,"command":cmd}));
-		callback_dict[id] = function () {
-			return el.html();
+		callback_dict[id] = function (msg) {
+			return el.html() + ':' + JSON.stringify(msg);
 		}
 	}
 
@@ -45,8 +45,8 @@ $(document).ready(function() {
         	var received_msg = JSON.parse(evt.data);
 		console.log(received_msg);
 		var cb = callback_dict[received_msg.correlation_id];
-		//humanMsg.displayMsg(cb.call() + ' ' + received_msg.matlab.message);
-		cb.call(this,received_msg.matlab);
+		humanMsg.displayMsg(cb.call(this,received_msg));
+		cb.call(this,received_msg);
 		delete cb;
      	};
 
@@ -58,14 +58,6 @@ $(document).ready(function() {
 
 	socket.onopen = function(evt)
 	{
-	var id = s4();
-	socket.send(JSON.stringify({"correlation_id":id,"command":"run_function('average_bias','<%=@path%>')"}));
-	callback_dict[id] = function(m) {
-		console.log(m);
-		$('#voltage').html(m.toFixed(2) + 'V');
-		delete self;
-	}
-
 	}
 });
 </script>
@@ -74,7 +66,7 @@ $(document).ready(function() {
 	<button data-matlab-call="run_function('make_xml','<%=@path%>')">Regenerate XML</button>
 	<button data-matlab-call="run_function('analyze_dissipation','<%=@path%>')">Analyze dissipation</button>
 	<button data-matlab-call="run_function('analyze_fshift','<%=@path%>')">Analyze frequency shift</button>
-	<button data-matlab-call="run_function('average_bias','<%=@path%>')">Average bias voltage</button>
+	<button data-matlab-call="run_function('delete_cache','<%=@path%>')">DELETE CACHE</button>
 </div>
 
 <div style="row">
@@ -109,7 +101,7 @@ $(document).ready(function() {
 			    type: "PUT",
 			    url: '/api<%=@path%>.xml',
 			    data: editor.getSession().getValue(),
-			    success: function(data) {console.log('Saved')}
+			    success: function(data) {console.log('Saved');humanMsg.displayMsg('Saved changes');}
 			}); 
 		    }
 		});

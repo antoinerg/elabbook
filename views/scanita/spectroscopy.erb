@@ -1,35 +1,51 @@
-<div class="onecol">
-<% for image in %w(drive_amplitude_f.svg dissipation_f.svg)  || [] %>
-<figure>
-	<object type="image/svg+xml" data="<%=settings.file_server + File.join(@image_dir,"#{@filename}.#{image}").gsub(settings.dir,'')%>">Your browser does not support SVG</object>
-</figure>
-<% end %>
-
-<%= @xml.xpath('/SPM/UserData/pressure')[0] || '#'%>
-
-<% fits = @xml.xpath('/SPM/Package/UserChannel[Name = "forward dissipation | InteractiveFit session"]/UserData/Fit')%>
-<table>
-	<tr>
-		<th>Vo</th>
-		<th>b</th>
-		<th>beta</th>
-		<th>c</th>
-	</tr>
-	<% fits.each do |fit| %>
-	<tr>
-		<% fit.children.each do |parameter| %>
-			<td><%= parameter.content %></td>
+<% path = settings.file_server + @folder.gsub(settings.dir,'') + "../img/" %>
+<% %w(Forward Backward).each do |direction| %>
+	<div class="row">
+	<h2><%= direction %></h2>
+	<div class="onecol">
+		<% ['drive amplitude | SMOOTHED', 'dissipation'].each do |name| %>
+			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name && f.xpath('/SPM/Viewer/View/Direction').first.content == direction}.first %>
+			<% if channel %>
+				<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
+				<figure>
+					<figcaption class="noprint"><%= channel.xpath('/SPM/Viewer/View/Name').first.content %></figcaption>
+					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
+				</figure>
+			<% end %>
 		<% end %>
-	</tr>
-	<% end %>
-</table>
+	
+		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'dissipation | InteractiveFit session' and Direction = $d]/UserData/Fit",nil,{:d => direction}) %>
+		<% if !fits.empty? %>
+		<table>
+			<tr>
+			<% fits.first.children.each do |el| %>
+				<th><%=el.name%></th>
+			<% end %>
+				<th>alpha</th>
+			</tr>
+			<% fits.each do |fit| %>
+			<tr>
+				<% fit.children.each do |parameter| %>
+					<td><%= parameter.at_xpath('value').content.to_f.round(6) %></td>
+				<% end %>
+				<td><%=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fit.at_xpath('beta/value').content.to_f).round(5) %></td>
+			</tr>
+			<% end %>
+		</table>
+		<% end %>
+	</div>
 
-</div>
-
-<div class="onecol last">
-<% for image in %w(delta_frequency_shift.svg corrected_delta_frequency_shift.svg)  || [] %>
-<figure>
-	<object type="image/svg+xml" data="<%=settings.file_server + File.join(@image_dir,"#{@filename}.#{image}").gsub(settings.dir,'')%>">Your browser does not support SVG</object>
-</figure>
+	<div class="onecol last">
+		<% ['frequency shift | substractedFit | SMOOTHED', 'smoothed delta frequency shift'].each do |name| %>
+			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name && f.xpath('/SPM/Viewer/View/Direction').first.content == direction}.first %>
+			<% if channel %>
+				<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
+				<figure>
+					<figcaption class="noprint"><%= channel.xpath('/SPM/Viewer/View/Name').first.content %></figcaption>
+					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
+				</figure>
+			<% end %>
+		<% end %>
+	</div>
+	</div>
 <% end %>
-</div>
