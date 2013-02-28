@@ -49,8 +49,9 @@ ws.send ({:correlation_id =>
       begin
         request = JSON.parse(msg)
         corr_id = request["correlation_id"] || UUID.generate
+	routing_key = request["routing_key"] || "matlab"
 	command = request["command"]
-        exchange.publish(request["command"], :routing_key => 'matlab',:reply_to => reply_queue.name, :correlation_id => corr_id)
+        exchange.publish(request["command"], :routing_key => routing_key,:reply_to => reply_queue.name, :correlation_id => corr_id)
       	@RPC[corr_id] = ws
       rescue JSON::ParserError => e
         ws.send ({:correlation_id =>

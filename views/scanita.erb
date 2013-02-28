@@ -29,10 +29,10 @@ $(document).ready(function() {
 		     .substring(1);
 	};
 
-	var button_send = function(el,cmd) {
+	var button_send = function(el,cmd,routing_key) {
 		humanMsg.displayMsg(el.html());
 		var id = s4();
-		socket.send(JSON.stringify({"correlation_id":id,"command":cmd}));
+		socket.send(JSON.stringify({"correlation_id":id,"command":cmd,"routing_key":routing_key}));
 		callback_dict[id] = function (msg) {
 			return el.html() + ':' + JSON.stringify(msg);
 		}
@@ -53,7 +53,10 @@ $(document).ready(function() {
 	$('#actions button').click(function(e) {
 		var el = $(e.target);
 		var cmd = el.attr('data-matlab-call');
-		button_send(el,cmd);
+		var routing_key = el.attr('data-matlab-routing-key');
+		if (routing_key == undefined)
+			routing_key = 'matlab';
+		button_send(el,cmd,routing_key);
 	});
 
 	socket.onopen = function(evt)
@@ -62,11 +65,11 @@ $(document).ready(function() {
 });
 </script>
 <div id="actions" class="row header noprint">
-	<button data-matlab-call="run_function('make_figure','<%=@path%>')">Regenerate figure</button>
-	<button data-matlab-call="run_function('make_xml','<%=@path%>')">Regenerate XML</button>
+	<button data-matlab-routing-key="matlab_nogui" data-matlab-call="run_function('make_figure','<%=@path%>')">Regenerate figure</button>
+	<button data-matlab-routing-key="matlab_nogui" data-matlab-call="run_function('make_xml','<%=@path%>')">Regenerate XML</button>
 	<button data-matlab-call="run_function('analyze_dissipation','<%=@path%>')">Analyze dissipation</button>
 	<button data-matlab-call="run_function('analyze_fshift','<%=@path%>')">Analyze frequency shift</button>
-	<button data-matlab-call="run_function('delete_cache','<%=@path%>')">DELETE CACHE</button>
+	<button data-matlab-routing-key="matlab_nogui" data-matlab-call="run_function('delete_cache','<%=@path%>')">DELETE CACHE</button>
 </div>
 
 <div style="row">
