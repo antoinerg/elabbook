@@ -16,3 +16,6 @@ gem "uuid"
 gem "foreman"
 
 gem "nori"
+
+gem "pdfkit"
+gem "shrimp"

@@ -60,7 +60,7 @@ get '/data/lt-afm/scanita/*/:day/raw' do
     end
   end
   @datetime = DateTime.iso8601(params[:day])
-  erb :"scanita/daily_report", :layout => :html5
+  erb :"scanita/daily_content", :layout => :html5
 end
 
 get '/api/*' do
