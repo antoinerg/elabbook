@@ -30,7 +30,7 @@
 					<td><%= parameter.at_xpath('value').content.to_f.round(6) %></td>
 				<% end %>
 				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fit.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
-				<td><%=(alpha*fit.at_xpath('Vo/value').content.to_f*1000).round(5) %> meV</td>
+				<td><%=(0.5*alpha*fit.at_xpath('Vo/value').content.to_f*1000).round(5) %> meV</td>
 			</tr>
 			<% end %>
 		</table>
