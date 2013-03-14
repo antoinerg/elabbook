@@ -1,36 +1,37 @@
 <% path = settings.file_server + @folder.gsub(settings.dir,'') + "../img/" %>
-<% %w(Forward Backward).each do |direction| %>
 	<div class="row">
-	<h2><%= direction %></h2>
 	<div class="onecol">
-		<% ['drive amplitude | SMOOTHED', 'dissipation'].each do |name| %>
-			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name && f.xpath('/SPM/Viewer/View/Direction').first.content == direction}.first %>
-			<% if channel %>
+		<% ['Averaged drive amplitude', 'Comparison with background', 'Dissipation | SMOOTHED'].each do |name| %>
+			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name }%>
+			<% if channel = channel.first %>
 				<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
 				<figure>
 					<figcaption class="noprint"><%= channel.xpath('/SPM/Viewer/View/Name').first.content %></figcaption>
 					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
+<a href="<%=url%>">Download</a>
 				</figure>
 			<% end %>
 		<% end %>
 	
-		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'dissipation | InteractiveFit session' and Direction = $d]/UserData/Fit",nil,{:d => direction}) %>
+		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'Dissipation peaks']/UserData/Fit") %>
 		<% if !fits.empty? %>
 		<table>
 			<tr>
-			<% fits.first.children.each do |el| %>
-				<th><%=el.name%></th>
-			<% end %>
+				<th>#</th>
+				<th>Vo</th>
+				<th>gamma</th>
 				<th>alpha</th>
 				<th>Ec</th>
+				<th>delta Ec</th>		
 			</tr>
-			<% fits.each do |fit| %>
+			<% 1.upto((fits.first.children.length-1)/2).each do |i| %>
 			<tr>
-				<% fit.children.each do |parameter| %>
-					<td><%= parameter.at_xpath('value').content.to_f.round(6) %></td>
-				<% end %>
-				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fit.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
-				<td><%=(0.5*alpha*fit.at_xpath('Vo/value').content.to_f*1000).round(5) %> meV</td>
+				<td><%=i%></td>
+				<td><%=fits.first.at_xpath("V#{i}/value").content.to_f.round(3)%></td>
+				<td><%=fits.first.at_xpath("gamma#{i}/value").content.to_f.round(3)%></td>
+				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
+				<td><%=ec=(fits.first.at_xpath("V#{i}/value").content.to_f * alpha*1000); ec.round(3) %> meV</td>
+				<td><%ecp=(fits.first.at_xpath("V#{i==1 ? 1:i-1}/value").content.to_f * alpha*1000);%><%= (ec-ecp).round(3) %></td>
 			</tr>
 			<% end %>
 		</table>
@@ -38,16 +39,40 @@
 	</div>
 
 	<div class="onecol last">
-		<% ['frequency shift | substractedFit | SMOOTHED', 'smoothed delta frequency shift'].each do |name| %>
-			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name && f.xpath('/SPM/Viewer/View/Direction').first.content == direction}.first %>
-			<% if channel %>
+		<% ['Averaged frequency shift', 'Difference | SMOOTHED', 'Delta frequency shift | SMOOTHED'].each do |name| %>
+			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name }%>
+			<% if channel = channel.first %>
 				<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
 				<figure>
 					<figcaption class="noprint"><%= channel.xpath('/SPM/Viewer/View/Name').first.content %></figcaption>
 					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
+<a href="<%=url%>">Download</a>
 				</figure>
 			<% end %>
 		<% end %>
+
+		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'Frequency shift peaks']/UserData/Fit") %>
+		<% if !fits.empty? %>
+		<table>
+			<tr>
+				<th>#</th>
+				<th>Vo</th>
+				<th>gamma</th>
+				<th>alpha</th>
+				<th>Ec</th>
+				<th>delta Ec</th>		
+			</tr>
+			<% 1.upto((fits.first.children.length-1)/2).each do |i| %>
+			<tr>
+				<td><%=i%></td>
+				<td><%=fits.first.at_xpath("V#{i}/value").content.to_f.round(3)%></td>
+				<td><%=fits.first.at_xpath("gamma#{i}/value").content.to_f.round(3)%></td>
+				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
+				<td><%=ec=(fits.first.at_xpath("V#{i}/value").content.to_f * alpha*1000); ec.round(3) %> meV</td>
+				<td><%ecp=(fits.first.at_xpath("V#{i==1 ? 1:i-1}/value").content.to_f * alpha*1000);%><%= (ec-ecp).round(3) %></td>
+			</tr>
+			<% end %>
+		</table>
+		<% end %>
 	</div>
-	</div>
-<% end %>
+</div>
