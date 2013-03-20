@@ -2,33 +2,35 @@
 	<div class="row">
 	<div class="onecol">
 		<% ['Averaged drive amplitude', 'Comparison with background', 'Dissipation | SMOOTHED'].each do |name| %>
-			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name }%>
+			<% channel = @images.select {|f| f.xpath('/Figure/Title').first.content == name }%>
 			<% if channel = channel.first %>
-				<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
+				<% url = path + channel.xpath('/Figure/@filename').first %>
 				<figure>
-					<figcaption class="noprint"><%= channel.xpath('/SPM/Viewer/View/Name').first.content %></figcaption>
+					<figcaption class="noprint"><%= channel.xpath('/Figure/Title').first.content %></figcaption>
 					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
-<a href="<%=url%>">Download</a>
+<a class="noprint" href="<%=url%>">Download</a>
 				</figure>
 			<% end %>
 		<% end %>
-	
+		
+		<% L=0 %>
 		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'Dissipation peaks']/UserData/Fit") %>
 		<% if !fits.empty? %>
+		<% amplitude_dissipation = [] %>
 		<table>
 			<tr>
 				<th>#</th>
 				<th>Vo</th>
-				<th>gamma</th>
+				<th>Peak amplitude</th>
 				<th>alpha</th>
 				<th>Ec</th>
 				<th>delta Ec</th>		
 			</tr>
-			<% 1.upto((fits.first.children.length-1)/2).each do |i| %>
+			<% L=(fits.first.children.length-1)/2;1.upto(L).each do |i| %>
 			<tr>
 				<td><%=i%></td>
 				<td><%=fits.first.at_xpath("V#{i}/value").content.to_f.round(3)%></td>
-				<td><%=fits.first.at_xpath("gamma#{i}/value").content.to_f.round(3)%></td>
+				<td><%=amplitude_dissipation[i]=fits.first.at_xpath("A#{i}/value").content.to_f;amplitude_dissipation[i].round(3)%></td>
 				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
 				<td><%=ec=(fits.first.at_xpath("V#{i}/value").content.to_f * alpha*1000); ec.round(3) %> meV</td>
 				<td><%ecp=(fits.first.at_xpath("V#{i==1 ? 1:i-1}/value").content.to_f * alpha*1000);%><%= (ec-ecp).round(3) %></td>
@@ -39,34 +41,35 @@
 	</div>
 
 	<div class="onecol last">
-		<% ['Averaged frequency shift', 'Difference | SMOOTHED', 'Delta frequency shift | SMOOTHED'].each do |name| %>
-			<% channel = @images.select {|f| f.xpath('/SPM/Viewer/View/Name').first.content == name }%>
+		<% ['Averaged frequency shift', 'Difference | SMOOTHED', 'Corrected delta frequency shift | SMOOTHED'].each do |name| %>
+			<% channel = @images.select {|f| f.xpath('/Figure/Title').first.content == name }%>
 			<% if channel = channel.first %>
-				<% url = path + channel.xpath('/SPM/Viewer/@filename').first %>
+				<% url = path + channel.xpath('/Figure/@filename').first %>
 				<figure>
-					<figcaption class="noprint"><%= channel.xpath('/SPM/Viewer/View/Name').first.content %></figcaption>
+					<figcaption class="noprint"><%= channel.xpath('/Figure/Title').first.content %></figcaption>
 					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
-<a href="<%=url%>">Download</a>
+<a class="noprint" href="<%=url%>">Download</a>
 				</figure>
 			<% end %>
 		<% end %>
 
 		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'Frequency shift peaks']/UserData/Fit") %>
 		<% if !fits.empty? %>
+		<% amplitude_fshift = [] %>
 		<table>
 			<tr>
 				<th>#</th>
 				<th>Vo</th>
-				<th>gamma</th>
+				<th>Peak amplitude</th>
 				<th>alpha</th>
 				<th>Ec</th>
 				<th>delta Ec</th>		
 			</tr>
-			<% 1.upto((fits.first.children.length-1)/2).each do |i| %>
+			<% L=(fits.first.children.length-1)/2;1.upto(L).each do |i| %>
 			<tr>
 				<td><%=i%></td>
 				<td><%=fits.first.at_xpath("V#{i}/value").content.to_f.round(3)%></td>
-				<td><%=fits.first.at_xpath("gamma#{i}/value").content.to_f.round(3)%></td>
+				<td><%=amplitude_fshift[i]=fits.first.at_xpath("A#{i}/value").content.to_f;amplitude_fshift[i].round(3)%></td>
 				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
 				<td><%=ec=(fits.first.at_xpath("V#{i}/value").content.to_f * alpha*1000); ec.round(3) %> meV</td>
 				<td><%ecp=(fits.first.at_xpath("V#{i==1 ? 1:i-1}/value").content.to_f * alpha*1000);%><%= (ec-ecp).round(3) %></td>
@@ -75,4 +78,23 @@
 		</table>
 		<% end %>
 	</div>
+
+	<% if L > 0 %>
+	<div class="row">
+	<div class="twocol">
+	<table style="margin:10px auto;width:50%;">
+		<tr>
+			<th>#</th>
+			<th>Tunneling rate (Hz)</th>
+		</tr>
+		<% 1.upto(L).each do |i| %>
+		<tr>
+			<td><%=i%></td>
+			<td><%=(2*(@xml.at_xpath('/SPM/UserData/cantilever/resonancefrequency').content.to_f*2*Math::PI)*amplitude_fshift[i]/amplitude_dissipation[i]).round(0); %>
+		</tr>
+		<% end %>
+	</table>
+	</div>
+	</div>
+	<% end %>
 </div>
