@@ -7,8 +7,7 @@
 				<% url = path + channel.xpath('/Figure/@filename').first %>
 				<figure>
 					<figcaption class="noprint"><%= channel.xpath('/Figure/Title').first.content %></figcaption>
-					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
-<a class="noprint" href="<%=url%>">Download</a>
+					<img src="<%=url%>"/>
 				</figure>
 			<% end %>
 		<% end %>
@@ -47,8 +46,7 @@
 				<% url = path + channel.xpath('/Figure/@filename').first %>
 				<figure>
 					<figcaption class="noprint"><%= channel.xpath('/Figure/Title').first.content %></figcaption>
-					<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
-<a class="noprint" href="<%=url%>">Download</a>
+					<img src="<%=url%>"/>
 				</figure>
 			<% end %>
 		<% end %>

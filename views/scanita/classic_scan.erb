@@ -11,7 +11,7 @@
 		<% url = path + channel.xpath('/Figure/@filename').first %>
 		<figure>
 			<figcaption><%= channel.xpath('/Figure/Title').first.content %></figcaption>
-			<object type="image/svg+xml" data="<%=url%>">Your browser does not support SVG</object>
+			<img src="<%=url%>"/>
 		</figure>
 	<% end %>
 <% end %>
