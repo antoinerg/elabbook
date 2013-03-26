@@ -1,0 +1,154 @@
+<%
+  @xml ||= object
+  @datetime = DateTime.iso8601(@xml.xpath('/SPM/Package/Date').first.content)
+  @type = @xml.xpath('/SPM/Package/Type').first.content
+  @hash = @xml.xpath('/SPM/Package/Hash').first.content
+%>
+
+<%
+  # Loading images
+  @image_dir=File.join(@folder,'..','img')
+  if File.directory?(@image_dir)
+  	@images = Dir.entries(@image_dir)[2..-1].sort.select {|f| f.match("#{@filename}.*xml$")}
+    	#parser = Nori.new
+	Dir.chdir(@image_dir) do
+		@images.collect! do |img_xml|
+			Nokogiri::XML(File.read(img_xml),&:noblanks)
+		end
+	end
+  else
+	@images = [];
+  end
+%>
+
+
+<div class="row header">
+	<div class="onecol">
+		<p class="meta">
+			<time datetime="<%= @datetime.to_s %>">
+			  <span class="day"><%= @datetime.day %></span>
+			  <span class="month"><%= Date::MONTHNAMES[@datetime.month] %></span>
+			  <span class="year"><%= @datetime.year %></span>
+			</time>
+		</p>
+		<h1 class="entry-title"><%= @filename %></h1>
+	</div>
+
+	<div class="onecol last">
+		<ul id="parameters">
+			<li><%= @xml.xpath('/SPM/UserData/pressure')[0] || '#'%> mbar</li>
+			<li><%= @xml.xpath('/SPM/UserData/temperature')[0] || '#'%>K</li>
+			<li><%= b=@xml.at_xpath('/SPM/BotData/average_bias'); b ? b.content.to_f.round(4) : '#' %>V</li>
+			<li><%= @xml.xpath('/SPM/UserData/oscillation/amplitude')[0] || '#'%> nm</li>
+		</ul>
+	</div>
+</div>
+
+<script>
+$(document).ready(function() {
+	var callback_dict = new Object;
+	function s4() {
+	  return Math.random()
+		     .toString(16)
+		     .substring(1);
+	};
+
+	var button_send = function(el,cmd,routing_key) {
+		humanMsg.displayMsg(el.html());
+		var id = s4();
+		socket.send(JSON.stringify({"correlation_id":id,"command":cmd,"routing_key":routing_key}));
+		callback_dict[id] = function (msg) {
+			return el.html() + ':' + JSON.stringify(msg);
+		}
+	}
+
+	var socket = new WebSocket('ws://<%= settings.ws_server %>');
+	window.socket = socket;
+	socket.onmessage = function (evt) 
+     	{ 
+        	var received_msg = JSON.parse(evt.data);
+		console.log(received_msg);
+		var cb = callback_dict[received_msg.correlation_id];
+		humanMsg.displayMsg(cb.call(this,received_msg));
+		cb.call(this,received_msg);
+		delete cb;
+     	};
+
+	$('#actions button').click(function(e) {
+		var el = $(e.target);
+		var cmd = el.attr('data-matlab-call');
+		var routing_key = el.attr('data-matlab-routing-key');
+		if (routing_key == undefined)
+			routing_key = 'matlab';
+		button_send(el,cmd,routing_key);
+	});
+
+	socket.onopen = function(evt)
+	{
+	}
+});
+</script>
+<div id="actions" class="row header noprint">
+	<button data-matlab-routing-key="matlab_nogui" data-matlab-call="run_function('make_figure','<%=@path%>')">Regenerate figure</button>
+	<button data-matlab-routing-key="matlab_nogui" data-matlab-call="run_function('make_xml','<%=@path%>')">Regenerate XML</button>
+	<button data-matlab-call="run_function('analyze_dissipation','<%=@path%>')">Analyze dissipation</button>
+	<button data-matlab-call="run_function('analyze_fshift','<%=@path%>')">Analyze frequency shift</button>
+	<button data-matlab-routing-key="matlab_nogui" data-matlab-call="run_function('delete_cache','<%=@path%>')">DELETE CACHE</button>
+</div>
+
+<div style="row">
+<%= erb "scanita/#{@type.gsub(' ','_')}".downcase.to_sym %>
+</div>
+
+<div class="row noprint">
+	<div class="twocol">
+	<h2>XML</h2>
+	<div id="editor"></div>
+
+	<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		$(document).ready(function() {
+	    var editor = ace.edit("editor");
+	    editor.setTheme("ace/theme/textmate");
+	    editor.getSession().setMode("ace/mode/xml");
+	
+		// Loading file
+		$.ajax({
+		  type: "GET",
+		  url: '/api<%=@path%>.xml',
+		  success: function(data) {editor.getSession().setValue(data);editor.blur();}
+		});
+		
+		// Quick save
+		editor.commands.addCommand({
+		    name: 'save',
+		    bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+		    exec: function(editor) {
+		      $.ajax({
+			    type: "PUT",
+			    url: '/api<%=@path%>.xml',
+			    data: editor.getSession().getValue(),
+			    success: function(data) {console.log('Saved');humanMsg.displayMsg('Saved changes');}
+			}); 
+		    }
+		});
+		})
+	</script>
+	</div>
+</div>
+
+<script type="text/javascript">
+		var isAlt = true;
+
+		$(document).keyup(function (e) {
+			if(e.which == 18) isAlt=false;
+		}).keydown(function (e) {
+			if(e.which == 18) isAlt=true;
+			if(e.which == 39) {
+				window.location.assign('<%= @next_url || '#' %>');
+			}
+			if(e.which == 37) {
+				window.location.assign('<%= @previous_url || '#' %>');
+			}
+		});
+</script>

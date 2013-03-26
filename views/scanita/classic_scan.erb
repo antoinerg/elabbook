@@ -1,21 +1,7 @@
-<style>figure {width:33%;float:left;}</style>
-
-<% path = settings.file_server + @folder.gsub(settings.dir,'') + "../img/" %>
 <% %w(Forward Backward).each do |direction| %>
 <div class="row">
-<div class="twocol">
 <h2><%= direction %></h2>
-<% ['Topography', 'Frequency shift', 'Drive amplitude'].each do |name| %>
-	<% channel = @images.select {|f| f.xpath('/Figure/Title').first.content == name && f.xpath('/Figure/Direction').first.content == direction}.first %>
-	<% if channel %>
-		<% url = path + channel.xpath('/Figure/@filename').first %>
-		<figure>
-			<figcaption><%= channel.xpath('/Figure/Title').first.content %></figcaption>
-			<img src="<%=url%>"/>
-		</figure>
-	<% end %>
-<% end %>
-</div>
+<%= partial "scanita/classic_scan_img", :locals => {sdf: sdf, direction: direction} %>
 </div>
 <% end %>
 

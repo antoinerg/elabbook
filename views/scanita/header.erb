@@ -1,0 +1,21 @@
+<div class="row header">
+	<div style="float:left">
+		<p class="meta">
+			<time datetime="<%= sdf.datetime.to_s %>">
+			  <span class="day"><%= sdf.datetime.day %></span>
+			  <span class="month"><%= Date::MONTHNAMES[sdf.datetime.month] %></span>
+			  <span class="year"><%= sdf.datetime.year %></span>
+			</time>
+		</p>
+		<h1 class="entry-title"><%= sdf.filename %></h1>
+	</div>
+
+	<div style="float:right">
+		<ul id="parameters">
+			<li><%= sdf.xml.xpath('/SPM/UserData/pressure')[0] || '#'%> mbar</li>
+			<li><%= sdf.xml.xpath('/SPM/UserData/temperature')[0] || '#'%>K</li>
+			<li><%= b=sdf.xml.at_xpath('/SPM/BotData/average_bias'); b ? b.content.to_f.round(4) : '#' %>V</li>
+			<li><%= sdf.xml.xpath('/SPM/UserData/oscillation/amplitude')[0] || '#'%> nm</li>
+		</ul>
+	</div>
+</div>

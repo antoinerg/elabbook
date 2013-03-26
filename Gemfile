@@ -14,8 +14,9 @@ gem "amqp"
 gem "em-websocket"
 gem "uuid"
 gem "foreman"
+gem "sinatra-partial"
 
 gem "nori"
 
-gem "pdfkit"
-gem "shrimp"
+#gem "pdfkit"
+#gem "shrimp"

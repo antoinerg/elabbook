@@ -1,0 +1,8 @@
+<div class="twocol">
+<% ['Topography', 'Frequency shift', 'Drive amplitude'].each do |name| %>
+	<% image = sdf.images.select {|f| f.title == name && f.direction == direction}.first %>
+	<% if image %>
+		<%= svg_tag(image,'one-third') %>
+	<% end %>
+<% end %>
+</div>

@@ -1,49 +1,33 @@
+# SINATRA framework
 require 'sinatra'
 require 'sinatra/base'
 require "sinatra/config_file"
+require 'sinatra/partial'
 
+# Helpful gems
 require 'json'
 require 'nokogiri'
 require 'nori'
 require 'date'
 
+# Ruby objects to help deal with various data files and their relatives representations
+require './models/sdf.rb'
+require './models/sdf_image.rb'
+
 class Elabbook < Sinatra::Base
 register Sinatra::ConfigFile
 config_file 'config.yml'
 
+register Sinatra::Partial
+set :partial_template_engine, :erb
+
 get '/data/lt-afm/scanita/*/:name.sdf' do
-  @path = request.fullpath
-  @filename = params[:name] + ".sdf"
-  @folder = File.join(settings.dir,@path.gsub(@filename,''))
+  @path = request.fullpath + ".xml"
+  @sdf = SDF.new(path(@path))
 
-  # Loading XML
-  @xml_path = File.join(settings.dir,@path + ".xml")
-  if File.exist?(@xml_path)
-    Dir.chdir(@folder) do
-      @xml = Nokogiri::XML(File.read(@xml_path),&:noblanks)
-      @datetime = DateTime.iso8601(@xml.xpath('/SPM/Package/Date').first.content)
-      @type = @xml.xpath('/SPM/Package/Type').first.content
-      @hash = @xml.xpath('/SPM/Package/Hash').first.content
-    end
-  end
-
-  # Loading images
-  @image_dir=File.join(@folder,'..','img')
-  if File.directory?(@image_dir)
-  	@images = Dir.entries(@image_dir)[2..-1].sort.select {|f| f.match("#{@filename}.*xml$")}
-    	#parser = Nori.new
-	Dir.chdir(@image_dir) do
-		@images.collect! do |img_xml|
-			Nokogiri::XML(File.read(img_xml),&:noblanks)
-		end
-	end
-  else
-	@images = [];
-  end
-  
   # Provide link to next data file in same folder
-  files = Dir.entries(@folder)[2..-1].sort.keep_if {|f| f.match(/.*sdf$/)}
-  id=files.find_index(@filename)
+  files = Dir.entries(@sdf.folder)[2..-1].sort.keep_if {|f| f.match(/.*sdf$/)}
+  id=files.find_index(@sdf.filename)
   @next_url = files.fetch(id+1,files[0])
   @previous_url = files.fetch(id-1)
   
@@ -53,7 +37,7 @@ end
 
 get '/data/lt-afm/scanita/*/:day/raw' do
   @path = request.fullpath
-  @folder = File.join(settings.dir,@path)
+  @folder = path(@path)
   Dir.chdir(@folder) do
     @xmls = Dir.entries(@folder)[2..-1].sort.select {|f| f.match(/.*xml$/)}.collect do |f|
 	Nokogiri::XML(File.read(f))
@@ -64,7 +48,7 @@ get '/data/lt-afm/scanita/*/:day/raw' do
 end
 
 get '/api/*' do
-  p = path
+  p = path(params[:splat])
   if File.exists?(p)
     return [200,list_file(p).to_json] if File.directory?(p)
     [200,File.read(p)]
@@ -92,7 +76,7 @@ post '/api/*' do
 end
 
 put '/api/*' do
-  p = path
+  p = path(params[:splat])
   if File.exists?(p)
     File.open(p,'w') do |f|
       f.write(request.body.read)
@@ -100,6 +84,16 @@ put '/api/*' do
     end
   else
     return[404,"Not found"]
+  end
+end
+
+get '*.erb.html' do
+  path = path(request.fullpath)
+  if File.exists?(path)
+    tmpl = File.read(path)
+    erb tmpl, :layout => :html5
+  else
+    path
   end
 end
 
@@ -114,13 +108,38 @@ get '*' do
   end
 end
 
-def list_file(path)
-  return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(settings.dir,'')}
+helpers do
+  def load_xml(p)
+    xml_path = path(p)
+    if File.exist?(xml_path)
+      xml = Nokogiri::XML(File.read(xml_path),&:noblanks)
+    end
+    return xml
+  end
+    
+  def list_file(path)
+    return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(settings.dir,'')}
+  end
+
+  def path(url=request.fullpath)
+    root = settings.dir
+    path = File.join(root,url)
+  end
+
+  def url_cdn(p)
+    settings.file_server + p.gsub(settings.dir,'')
+  end
+
+  def svg_tag(image,html_class='')
+    html = []
+    url = url_cdn(image.path)
+    html << "<figure class='#{html_class}'>"
+    html << "<figcaption>#{image.title}</figcaption>"
+    html << "<object type='image/svg+xml' data='#{url}'></object>"
+    html << "</figure>"
+    html.join("\n")
+  end
+end
 end
 
-def path(url=params[:splat])
-  #root = File.dirname(__FILE__)
-  root = settings.dir
-  path = File.join(root,url)
-end
-end
+

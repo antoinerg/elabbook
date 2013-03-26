@@ -1,0 +1,14 @@
+<div class="row small">
+	<div class="onecol">
+		<h3 class="entry-title"><%= sdf.filename %></h3>
+	</div>
+
+	<div class="onecol last">
+		<ul id="parameters">
+			<li><%= sdf.xml.xpath('/SPM/UserData/pressure')[0] || '#'%> mbar</li>
+			<li><%= sdf.xml.xpath('/SPM/UserData/temperature')[0] || '#'%>K</li>
+			<li><%= b=sdf.xml.at_xpath('/SPM/BotData/average_bias'); b ? b.content.to_f.round(4) : '#' %>V</li>
+			<li><%= sdf.xml.xpath('/SPM/UserData/oscillation/amplitude')[0] || '#'%> nm</li>
+		</ul>
+	</div>
+</div>

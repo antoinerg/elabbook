@@ -1,19 +1,15 @@
-<% path = settings.file_server + @folder.gsub(settings.dir,'') + "../img/" %>
-	<div class="row">
+<% direction = '' %>	
+<div class="row">
 	<div class="onecol">
 		<% ['Averaged drive amplitude', 'Comparison with background', 'Dissipation | SMOOTHED'].each do |name| %>
-			<% channel = @images.select {|f| f.xpath('/Figure/Title').first.content == name }%>
-			<% if channel = channel.first %>
-				<% url = path + channel.xpath('/Figure/@filename').first %>
-				<figure>
-					<figcaption class="noprint"><%= channel.xpath('/Figure/Title').first.content %></figcaption>
-					<img src="<%=url%>"/>
-				</figure>
+			<% image = sdf.images.select {|f| f.title == name && f.direction == direction}.first %>
+			<% if image %>
+				<%= svg_tag(image) %>
 			<% end %>
 		<% end %>
 		
 		<% L=0 %>
-		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'Dissipation peaks']/UserData/Fit") %>
+		<% fits = sdf.xml.xpath("/SPM/Package/UserChannel[Name = 'Dissipation peaks']/UserData/Fit") %>
 		<% if !fits.empty? %>
 		<% amplitude_dissipation = [] %>
 		<table>
@@ -30,7 +26,7 @@
 				<td><%=i%></td>
 				<td><%=fits.first.at_xpath("V#{i}/value").content.to_f.round(3)%></td>
 				<td><%=amplitude_dissipation[i]=fits.first.at_xpath("A#{i}/value").content.to_f;amplitude_dissipation[i].round(3)%></td>
-				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
+				<td><%=alpha=(sdf.xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
 				<td><%=ec=(fits.first.at_xpath("V#{i}/value").content.to_f * alpha*1000); ec.round(3) %> meV</td>
 				<td><%ecp=(fits.first.at_xpath("V#{i==1 ? 1:i-1}/value").content.to_f * alpha*1000);%><%= (ec-ecp).round(3) %></td>
 			</tr>
@@ -41,17 +37,13 @@
 
 	<div class="onecol last">
 		<% ['Averaged frequency shift', 'Difference | SMOOTHED', 'Corrected delta frequency shift | SMOOTHED'].each do |name| %>
-			<% channel = @images.select {|f| f.xpath('/Figure/Title').first.content == name }%>
-			<% if channel = channel.first %>
-				<% url = path + channel.xpath('/Figure/@filename').first %>
-				<figure>
-					<figcaption class="noprint"><%= channel.xpath('/Figure/Title').first.content %></figcaption>
-					<img src="<%=url%>"/>
-				</figure>
+			<% image = sdf.images.select {|f| f.title == name && f.direction == direction}.first %>
+			<% if image %>
+				<%= svg_tag(image) %>
 			<% end %>
 		<% end %>
 
-		<% fits = @xml.xpath("/SPM/Package/UserChannel[Name = 'Frequency shift peaks']/UserData/Fit") %>
+		<% fits = sdf.xml.xpath("/SPM/Package/UserChannel[Name = 'Frequency shift peaks']/UserData/Fit") %>
 		<% if !fits.empty? %>
 		<% amplitude_fshift = [] %>
 		<table>
@@ -68,7 +60,7 @@
 				<td><%=i%></td>
 				<td><%=fits.first.at_xpath("V#{i}/value").content.to_f.round(3)%></td>
 				<td><%=amplitude_fshift[i]=fits.first.at_xpath("A#{i}/value").content.to_f;amplitude_fshift[i].round(3)%></td>
-				<td><%=alpha=(@xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
+				<td><%=alpha=(sdf.xml.at_xpath('/SPM/UserData/temperature').content.to_f * fits.first.at_xpath('beta/value').content.to_f); alpha.round(5) %></td>
 				<td><%=ec=(fits.first.at_xpath("V#{i}/value").content.to_f * alpha*1000); ec.round(3) %> meV</td>
 				<td><%ecp=(fits.first.at_xpath("V#{i==1 ? 1:i-1}/value").content.to_f * alpha*1000);%><%= (ec-ecp).round(3) %></td>
 			</tr>
@@ -88,7 +80,7 @@
 		<% 1.upto(L).each do |i| %>
 		<tr>
 			<td><%=i%></td>
-			<td><%=(2*(@xml.at_xpath('/SPM/UserData/cantilever/resonancefrequency').content.to_f*2*Math::PI)*amplitude_fshift[i]/amplitude_dissipation[i]).round(0); %>
+			<td><%=(2*(sdf.xml.at_xpath('/SPM/UserData/cantilever/resonancefrequency').content.to_f*2*Math::PI)*amplitude_fshift[i]/amplitude_dissipation[i]).round(0); %>
 		</tr>
 		<% end %>
 	</table>
