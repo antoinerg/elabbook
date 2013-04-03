@@ -13,6 +13,7 @@ require 'date'
 # Ruby objects to help deal with various data files and their relatives representations
 require './models/sdf.rb'
 require './models/sdf_image.rb'
+require './models/sample.rb'
 
 class Elabbook < Sinatra::Base
 register Sinatra::ConfigFile
@@ -20,6 +21,12 @@ config_file 'config.yml'
 
 register Sinatra::Partial
 set :partial_template_engine, :erb
+
+get '/data/gold_thin_films/*/log.xml' do
+  @path = request.fullpath
+  @sample = Sample.new(path(@path))
+  erb :sample, :layout => :html5
+end
 
 get '/data/lt-afm/scanita/*/:name.sdf' do
   @path = request.fullpath + ".xml"
