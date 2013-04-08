@@ -1,0 +1,12 @@
+<% @sdf ||= sdf %>
+<% @direction ||= direction ||= 'Forward' %>
+<div class="row">
+<div class="onecol">
+<% img = sdf.images.find {|f| f.title == 'Drive amplitude' && f.direction == @direction} %>
+<%= svg_tag(img) %>
+</div>
+<div class="onecol last">
+<% img = sdf.images.find {|f| f.title == 'Difference between Frequency shift and Parabolic fit from 0-20Hz | SMOOTHED' && f.direction == @direction} %>
+<%= svg_tag(img) %>
+</div>
+</div>

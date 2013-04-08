@@ -5,6 +5,19 @@ div.container {
   padding:25px;
 }
 
+div.page-break {
+  page-break-before:always;
+  page-break-after:auto;
+  text-align:center;
+}
+
+div.page-break h2 {
+  font-size:30px;
+  text-align:center;
+  padding-top:100px;
+  padding-bottom:100px;
+}
+
 body {
 font-family: 'HelvLight', 'Helvetica', 'Arial', 'Open Sans';
 color: #000;

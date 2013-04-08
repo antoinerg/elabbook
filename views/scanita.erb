@@ -2,7 +2,17 @@
 <%= partial :"scanita/header", :locals => {sdf: @sdf} %>
 
 <div style="row">
-<%= partial "scanita/#{@sdf.type.gsub(' ','_')}".downcase.to_sym, :locals => {sdf: @sdf} %>
+	<% type = @sdf.type.gsub(' ','_') %>
+	<% case type when "Classic scan" %>
+		<%= partial "scanita/#{type}".downcase.to_sym, :locals => {sdf: @sdf} %>
+	<% when "Spectroscopy" %>
+	<div style="page-break-before:always;">
+		<%= partial "scanita/#{type}".downcase.to_sym, :locals => {sdf: @sdf,direction:'Forward'} %>
+	</div>
+	<div style="page-break-before:always;">
+		<%= partial "scanita/#{type}".downcase.to_sym, :locals => {sdf: @sdf,direction:'Backward'} %>
+	</div>
+	<% end %>
 </div>
 
 <div class="row noprint">
