@@ -3,7 +3,7 @@
 
 <div style="row">
 	<% type = @sdf.type.gsub(' ','_') %>
-	<% case type when "Classic scan" %>
+	<% case type when "Classic_Scan" %>
 		<%= partial "scanita/#{type}".downcase.to_sym, :locals => {sdf: @sdf} %>
 	<% when "Spectroscopy" %>
 	<div style="page-break-before:always;">

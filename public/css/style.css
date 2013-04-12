@@ -59,6 +59,7 @@ ul#parameters li {
 	width: 100%;
 	margin: 10px auto;
 	overflow: hidden;
+  page-break-inside:avoid;
 }
 
 .onecol {
