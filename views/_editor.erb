@@ -1,0 +1,38 @@
+<% @url ||= url %>
+
+<div class="row noprint">
+	<div class="twocol">
+	<h2>XML</h2>
+	<div id="editor"></div>
+
+	<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+	$(document).ready(function() {
+	    var editor = ace.edit("editor");
+	    editor.setTheme("ace/theme/textmate");
+	    editor.getSession().setMode("ace/mode/xml");
+	
+		// Loading file
+		$.ajax({
+		  type: "GET",
+		  url: '/api<%=url%>',
+		  success: function(data) {editor.getSession().setValue(data);editor.blur();}
+		});
+		
+		// Quick save
+		editor.commands.addCommand({
+		    name: 'save',
+		    bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+		    exec: function(editor) {
+		      $.ajax({
+			    type: "PUT",
+			    url: '/api<%=url%>',
+			    data: editor.getSession().getValue(),
+			    success: function(data) {console.log('Saved');humanMsg.displayMsg('Saved changes');}
+			}); 
+		    }
+		});
+		})
+	</script>
+	</div>
+</div>
