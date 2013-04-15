@@ -22,7 +22,7 @@ config_file 'config.yml'
 register Sinatra::Partial
 set :partial_template_engine, :erb
 
-get '/data/gold_thin_films/*/log.xml' do
+get '/data/sample_preparation/*/log.xml' do
   @path = request.fullpath
   @sample = Sample.new(path(@path))
   erb :sample, :layout => :html5
