@@ -145,7 +145,7 @@ helpers do
     case type
      when :svg
           url = url_cdn(image.svg_path)
-      html << "<object type='image/svg+xml' data='#{url}'></object><a href='#{url}'>Download</a>"
+      html << "<object type='image/svg+xml' data='#{url}'></object><a class='noprint' href='#{url}'>Download</a>"
      when :png
           url = url_cdn(image.png_path)
       html << "<a href='#{url}'><img style='width:100%' src='#{url}'/></a>"
