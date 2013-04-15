@@ -2,7 +2,7 @@
 <h2><%= direction %></h2>	
 <div class="row">
 	<div class="onecol">
-		<% ['Drive amplitude', 'Drive amplitude with background', 'Dissipation peaks'].each do |name| %>
+		<% ['Drive amplitude', 'Drive amplitude with background', 'Dissipation peaks', 'Dissipation peaks | SMOOTHED'].each do |name| %>
 			<% image = sdf.images.select {|f| f.title == name && f.direction == direction}.first %>
 			<% if image %>
 				<%= svg_tag(image) %>
@@ -38,7 +38,7 @@
 	</div>
 
 	<div class="onecol last">
-		<% ['Frequency shift and Parabolic fit from 0-20Hz', 'Difference between Frequency shift and Parabolic fit from 0-20Hz | SMOOTHED', 'Frequency shift peaks'].each do |name| %>
+		<% ['Frequency shift and Parabolic fit from 0-20Hz', 'Difference between Frequency shift and Parabolic fit from 0-20Hz | SMOOTHED', 'Frequency shift peaks', 'Frequency shift peaks | SMOOTHED'].each do |name| %>
 			<% image = sdf.images.select {|f| f.title == name && f.direction == direction}.first %>
 			<% if image %>
 				<%= svg_tag(image) %>
