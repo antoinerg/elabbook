@@ -1,3 +1,19 @@
 <% @sample ||= sample %>
 
-<%= @sample.xml.at_xpath('/log/title').content %>
+<%= partial :"sample/header", :locals => {sample: @sample} %>
+
+<div class="row">
+
+<div class="twocol">
+<h2>Images</h2>
+	<% image = @sample.images.select {|f| f.title == 'Topography'}.first %>
+	<% if image %>
+		<%= svg_tag(image,'one-third') %>
+	<% end %>
+</div>
+
+
+
+</div>
+
+<%= partial :"_editor", :locals => {url: "#{request.fullpath}"} %>
