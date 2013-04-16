@@ -138,18 +138,22 @@ helpers do
   end
 
   def svg_tag(image,html_class='')
-    type = :svg
     html = []
     html << "<figure class='#{html_class}'>"
     html << "<figcaption>#{image.title}</figcaption>"
-    case type
-     when :svg
-          url = url_cdn(image.svg_path)
-      html << "<object type='image/svg+xml' data='#{url}'></object><a class='noprint' href='#{url}'>Download</a>"
-     when :png
-          url = url_cdn(image.png_path)
-      html << "<a href='#{url}'><img style='width:100%' src='#{url}'/></a>"
-    end
+    url = url_cdn(image.svg_path)
+    html << "<object type='image/svg+xml' data='#{url}'></object><a class='noprint' href='#{url}'>Download</a>"
+
+    html << "</figure>"
+    html.join("\n")
+  end
+
+  def png_tag(image,html_class='')
+    html = []
+    html << "<figure class='#{html_class}'>"
+    html << "<figcaption>#{image.title}</figcaption>"
+    url = url_cdn(image.png_path)
+    html << "<a href='#{url}'><img style='width:100%' src='#{url}'/></a>"
     html << "</figure>"
     html.join("\n")
   end

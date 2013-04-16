@@ -5,9 +5,8 @@
 <div class="row">
 
 <div class="twocol">
-<h2>Images</h2>
-	<% image = @sample.images.select {|f| f.title == 'Topography'}.first %>
-	<% if image %>
+<h2>Images (<%=@sample.images.count %>)</h2>
+	<% @sample.images.select {|f| f.title == 'Height | FLATTEN | REMOVEDPOLYBG (2,2)'}.each do |image| %>
 		<%= svg_tag(image,'one-third') %>
 	<% end %>
 </div>

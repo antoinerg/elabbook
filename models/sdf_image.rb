@@ -27,18 +27,4 @@ class SDFImage
   def title
     @xml.at_xpath('/Figure/Title').content
   end
-
-  def self.find_by_sdf(sdf)
-    image_dir ||= File.join(sdf.folder,'..','img')
-	  # Loading images
-	  if File.directory?(image_dir)
-	  	images = Dir.entries(image_dir)[2..-1].sort.select {|f| f.match("#{sdf.filename}.*xml$")}
-	    	#parser = Nori.new
-  		images.collect! do |img_xml|
-  			self.new(File.join(image_dir,img_xml))
-  		end
-	  else
-		  images = [];
-	  end
-  end
 end

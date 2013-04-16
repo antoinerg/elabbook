@@ -11,7 +11,7 @@ class Sample
   end
 
   def images
-    @images ||= SDFImage.find_by_sdf(self)
+    @images ||= find_images
   end
 
   def title
@@ -20,5 +20,18 @@ class Sample
 
   def datetime 
     DateTime.iso8601(@xml.xpath('/log/date').first.content)
+  end
+
+  def find_images
+    image_dir = File.join(self.folder,'img')
+    # Loading images
+    if File.directory?(image_dir)
+      images = Dir.entries(image_dir)[2..-1].sort.select {|f| f.match(".*xml$")}
+      images.collect! do |img_xml|
+        SDFImage.new(File.join(image_dir,img_xml))
+      end
+    else
+      images = [];
+    end
   end
 end

@@ -27,6 +27,20 @@ class SDF
   end
 
   def images
-    @images ||= SDFImage.find_by_sdf(self)
+    @images ||= find_images
+  end
+
+  def find_images
+    image_dir = File.join(self.folder,'..','img')
+    # Loading images
+    if File.directory?(image_dir)
+      images = Dir.entries(image_dir)[2..-1].sort.select {|f| f.match("#{self.filename}.*xml$")}
+        #parser = Nori.new
+      images.collect! do |img_xml|
+        SDFImage.new(File.join(image_dir,img_xml))
+      end
+    else
+      images = [];
+    end
   end
 end
