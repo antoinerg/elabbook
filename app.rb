@@ -7,7 +7,6 @@ require 'sinatra/partial'
 # Helpful gems
 require 'json'
 require 'nokogiri'
-require 'nori'
 require 'date'
 
 # Ruby objects to help deal with various data files and their relatives representations
@@ -17,7 +16,7 @@ require './models/sample.rb'
 
 class Elabbook < Sinatra::Base
 register Sinatra::ConfigFile
-config_file 'config.yml'
+config_file 'config/config.yml'
 
 register Sinatra::Partial
 set :partial_template_engine, :erb
