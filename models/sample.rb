@@ -15,7 +15,11 @@ class Sample
   end
 
   def title
-    @xml.at_xpath('/log/title').content
+    @xml.at_xpath('/log/title').content rescue ""
+  end
+
+  def id
+    @xml.at_xpath('/log/sample').content rescue ""
   end
 
   def datetime 

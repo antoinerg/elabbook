@@ -1,9 +1,10 @@
 <div class="row header">
-	<div class="onecol">
+	<div style="float:left">
+		<p class="meta"></p>
 		<h1 class="entry-title"><%=@datetime.day%> <%=Date::MONTHNAMES[@datetime.month]%> <%=@datetime.year%></h1>
 	</div>
 
-	<div class="onecol last">
+	<div style="float:right">
 		<ul id="parameters">
 			<li><%= @xmls.size %> files</li>
 		</ul>

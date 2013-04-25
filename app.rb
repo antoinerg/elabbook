@@ -13,6 +13,9 @@ require 'date'
 require './models/sdf.rb'
 require './models/sdf_image.rb'
 require './models/sample.rb'
+require './models/sams.rb'
+
+require './lib/find.rb'
 
 class Elabbook < Sinatra::Base
 register Sinatra::ConfigFile
@@ -130,6 +133,10 @@ helpers do
   def path(url=request.fullpath)
     root = settings.dir
     path = File.join(root,url)
+  end
+
+  def url(filepath)
+    "/" + filepath.gsub(settings.dir,'')
   end
 
   def url_cdn(p)
