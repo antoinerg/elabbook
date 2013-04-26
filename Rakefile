@@ -6,7 +6,7 @@ namespace :sams do
     command = <<-EOF
     #!/bin/sh
 
-    curl -XPUT 'http://es.lxc:9200/elabbook/sams/_mapping' -d '{
+    curl -XPUT 'http://elabbook.lxc:9200/elabbook/sams/_mapping' -d '{
           "sams" : {
             "properties" : {
               "procedure.step_1" : {
@@ -45,7 +45,7 @@ namespace :sams do
     require './xml/sams_log_to_es.rb'
     require './lib/find.rb'
     es = ElasticSearch.new
-    find('/Volumes/share/data/sams') do |f|
+    find('/mnt/elabbook/data/sample_preparation/sams') do |f|
       if File.basename(f) == 'log.xml'
         begin
         #puts "Indexing #{f}"
