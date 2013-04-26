@@ -13,11 +13,7 @@ class SDFImage
   end
 
   def direction
-    begin
-      @xml.at_xpath('/Figure/Direction').content
-    rescue
-      ''
-    end
+      @xml.at_xpath('/Figure/Direction').content rescue ''
   end
 
   def path
@@ -25,6 +21,6 @@ class SDFImage
   end
 
   def title
-    @xml.at_xpath('/Figure/Title').content
+    @xml.at_xpath('/Figure/Title').content rescue ''
   end
 end

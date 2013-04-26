@@ -35,7 +35,7 @@ class Sample
         SDFImage.new(File.join(image_dir,img_xml))
       end
     else
-      images = [];
+      images = nil;
     end
   end
 end
