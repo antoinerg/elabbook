@@ -49,8 +49,8 @@ get '/data/lt-afm/scanita/*/:day/raw' do
   @path = request.fullpath
   @folder = path(@path)
   Dir.chdir(@folder) do
-    @xmls = Dir.entries(@folder)[2..-1].sort.select {|f| f.match(/.*xml$/)}.collect do |f|
-	Nokogiri::XML(File.read(f))
+    @sdfs = Dir.entries(@folder)[2..-1].sort.select {|f| f.match(/.*xml$/)}.collect do |f|
+	    SDF.new(f)
     end
   end
   @datetime = DateTime.iso8601(params[:day])
