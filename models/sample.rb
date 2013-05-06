@@ -30,7 +30,7 @@ class Sample
     image_dir = File.join(self.folder,'img')
     # Loading images
     if File.directory?(image_dir)
-      images = Dir.entries(image_dir)[2..-1].sort.select {|f| f.match(".*xml$")}
+      images = Dir.entries(image_dir).sort.select {|f| f.match(".*xml$")}
       images.collect! do |img_xml|
         SDFImage.new(File.join(image_dir,img_xml))
       end
