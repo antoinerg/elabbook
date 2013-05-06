@@ -15,7 +15,7 @@
 			<li><%= sdf.xml.xpath('/SPM/UserData/pressure')[0] || '#'%> mbar</li>
 			<li><%= sdf.xml.xpath('/SPM/UserData/temperature')[0] || '#'%>K</li>
 			<li><%= b=sdf.xml.at_xpath('/SPM/BotData/average_bias'); b ? b.content.to_f.round(4) : '#' %>V</li>
-			<li><%= sdf.xml.xpath('/SPM/UserData/oscillation/amplitude')[0] || '#'%> nm</li>
+			<li><%= a=sdf.xml.xpath('/SPM/UserData/oscillation/amplitude'); a ? a[0].content + " " + a[0].attributes['units'] : '#' %> </li>
 		</ul>
 	</div>
 </div>
