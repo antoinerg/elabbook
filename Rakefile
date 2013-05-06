@@ -1,3 +1,6 @@
+require './app.rb'
+config_file File.join( [settings.root, 'config', 'config.yml'] )
+
 namespace :index do
 namespace :sams do
   

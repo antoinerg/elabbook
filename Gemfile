@@ -10,6 +10,8 @@ gem "nokogiri"
 gem "uuid"
 gem "sinatra-partial"
 
+gem 'json_builder'
+
 group :development do
   gem 'shotgun'
   gem "capistrano"

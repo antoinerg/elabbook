@@ -8,6 +8,7 @@ require 'sinatra/partial'
 require 'json'
 require 'nokogiri'
 require 'date'
+require 'json_builder'
 
 # Ruby objects to help deal with various data files and their relatives representations
 require './models/sdf.rb'
