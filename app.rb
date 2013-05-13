@@ -15,6 +15,7 @@ require './models/sdf.rb'
 require './models/sdf_image.rb'
 require './models/sample.rb'
 require './models/sams.rb'
+require './models/nanonis.rb'
 
 require './lib/find.rb'
 
@@ -24,6 +25,13 @@ config_file 'config/config.yml'
 
 register Sinatra::Partial
 set :partial_template_engine, :erb
+
+get /data\/lt-afm\/nanonis\/.*(dat|sxm)$/ do
+  @path = request.fullpath + ".xml"
+  @nanonis = Nanonis.new(path(@path))
+
+  erb :nanonis, :layout => :html5
+end
 
 get '/data/sample_preparation/*/log.xml' do
   @path = request.fullpath

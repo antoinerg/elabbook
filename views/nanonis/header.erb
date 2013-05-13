@@ -1,0 +1,19 @@
+<div class="row header">
+	<div style="float:left">
+		<p class="meta">
+			<time datetime="<%= nanonis.datetime.to_s %>">
+			  <span class="day"><%= nanonis.datetime.day %></span>
+			  <span class="month"><%= Date::MONTHNAMES[nanonis.datetime.month] %></span>
+			  <span class="year"><%= nanonis.datetime.year %></span>
+			</time>
+		</p>
+		<h1 class="entry-title"><%= nanonis.filename %></h1>
+	</div>
+
+	<div style="float:right">
+		<ul id="parameters">
+			<li><%= nanonis.xml.xpath('/SPM/Package/Header/pressure')[0] || '#'%> mbar</li>
+			<li><%= nanonis.xml.xpath('/SPM/Package/Header/temperature')[0] || '#'%>K</li>
+		</ul>
+	</div>
+</div>

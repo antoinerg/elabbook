@@ -1,0 +1,24 @@
+<% @nanonis ||= nanonis %>
+<%= partial :"nanonis/header", :locals => {nanonis: @nanonis} %>
+
+<div style="row">
+
+</div>
+
+<%= partial :"_editor", :locals => {url: "#{request.fullpath}.xml"} %>
+
+<script type="text/javascript">
+		var isAlt = true;
+
+		$(document).keyup(function (e) {
+			if(e.which == 18) isAlt=false;
+		}).keydown(function (e) {
+			if(e.which == 18) isAlt=true;
+			if(e.which == 39) {
+				window.location.assign('<%= @next_url || '#' %>');
+			}
+			if(e.which == 37) {
+				window.location.assign('<%= @previous_url || '#' %>');
+			}
+		});
+</script>
