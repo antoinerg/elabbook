@@ -11,6 +11,7 @@ require 'date'
 require 'json_builder'
 
 # Ruby objects to help deal with various data files and their relatives representations
+require './models/spm.rb'
 require './models/sdf.rb'
 require './models/sdf_image.rb'
 require './models/sample.rb'
