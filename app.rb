@@ -32,7 +32,7 @@ get /^\/data\/lt-afm\/nanonis\/.*(dat|sxm)$/ do
   @nanonis = Nanonis.new(path(@path))
 
   # Provide link to next data file in same folder
-  files = Dir.entries(@nanonis.folder)[2..-1].sort.keep_if {|f| f.match(/.*(dat|sxm)$/)}
+  files = Dir.entries(@nanonis.folder).sort.keep_if {|f| f.match(/.*(dat|sxm)$/)}
   id=files.find_index(@nanonis.filename)
   @next_url = files.fetch(id+1,files[0])
   @previous_url = files.fetch(id-1)
@@ -51,7 +51,7 @@ get '/data/lt-afm/scanita/*/:name.sdf' do
   @sdf = SDF.new(path(@path))
 
   # Provide link to next data file in same folder
-  files = Dir.entries(@sdf.folder)[2..-1].sort.keep_if {|f| f.match(/.*sdf$/)}
+  files = Dir.entries(@sdf.folder).sort.keep_if {|f| f.match(/.*sdf$/)}
   id=files.find_index(@sdf.filename)
   @next_url = files.fetch(id+1,files[0])
   @previous_url = files.fetch(id-1)
@@ -64,7 +64,7 @@ get '/data/lt-afm/scanita/*/:day/raw' do
   @path = request.fullpath
   @folder = path(@path)
   Dir.chdir(@folder) do
-    @sdfs = Dir.entries(@folder)[2..-1].sort.select {|f| f.match(/.*xml$/)}.collect do |f|
+    @sdfs = Dir.entries(@folder).sort.select {|f| f.match(/.*xml$/)}.collect do |f|
 	    SDF.new(f)
     end
   end
