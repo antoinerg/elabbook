@@ -31,6 +31,12 @@ get /^\/data\/lt-afm\/nanonis\/.*(dat|sxm)$/ do
   @path = request.fullpath + ".xml"
   @nanonis = Nanonis.new(path(@path))
 
+  # Provide link to next data file in same folder
+  files = Dir.entries(@nanonis.folder)[2..-1].sort.keep_if {|f| f.match(/.*(dat|sxm)$/)}
+  id=files.find_index(@nanonis.filename)
+  @next_url = files.fetch(id+1,files[0])
+  @previous_url = files.fetch(id-1)
+
   erb :nanonis, :layout => :html5
 end
 

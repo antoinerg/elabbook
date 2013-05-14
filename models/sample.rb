@@ -23,7 +23,7 @@ class Sample
   end
 
   def datetime 
-    DateTime.iso8601(@xml.xpath('/log/date').first.content)
+    DateTime.iso8601(@xml.xpath('/log/date').first.content) rescue nil
   end
 
   def find_images

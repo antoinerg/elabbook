@@ -1,11 +1,13 @@
 <div class="row header">
 	<div style="float:left">
 		<p class="meta">
+			<% if sample.datetime %>
 			<time datetime="<%= sample.datetime.to_s %>">
 			  <span class="day"><%= sample.datetime.day %></span>
 			  <span class="month"><%= Date::MONTHNAMES[sample.datetime.month] %></span>
 			  <span class="year"><%= sample.datetime.year %></span>
 			</time>
+			<% end %>
 		</p>
 		<h1 class="entry-title"><%= sample.title %></h1>
 	</div>

@@ -1,0 +1,10 @@
+<div class="row">
+<h2>Images</h2>	
+	<div class="twocol">
+		<% if nanonis.images %>
+		<% nanonis.images.each do |image| %>
+			<%= svg_tag(image) %>
+		<% end %>
+		<% end %>
+	</div>
+</div>s

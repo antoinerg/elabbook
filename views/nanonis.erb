@@ -1,9 +1,6 @@
 <% @nanonis ||= nanonis %>
 <%= partial :"nanonis/header", :locals => {nanonis: @nanonis} %>
-
-<div style="row">
-
-</div>
+<%= partial :"nanonis/spectroscopy", :locals => {nanonis: @nanonis} %>
 
 <%= partial :"_editor", :locals => {url: "#{request.fullpath}.xml"} %>
 
