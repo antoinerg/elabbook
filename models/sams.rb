@@ -2,13 +2,7 @@ config_file File.join( [settings.root, 'config', 'config.yml'] )
 
 class Sams < Sample
   def self.all
-    logs = [];
-    find(File.join(settings.dir,'/data/sample_preparation/sams')) do |f|
-      if f.match(/.*log.xml$/)
-        logs << Sams.new(f)
-      end
-    end
-    return logs
+    super('/data/sample_preparation/sams')
   end
   
   def to_json

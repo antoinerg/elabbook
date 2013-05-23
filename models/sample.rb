@@ -1,5 +1,16 @@
 class Sample
   attr_reader :folder, :path, :xml
+  
+  def self.all(path)
+    logs = [];
+    find(File.join(settings.dir,path)) do |f|
+      if f.match(/.*log.xml$/)
+        logs << Sams.new(f)
+      end
+    end
+    return logs
+  end
+
   def initialize(xml_path)
     @path = xml_path
     @folder = File.dirname(@path)
