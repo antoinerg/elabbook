@@ -18,6 +18,10 @@ class SPM
     @xml.xpath('/SPM/Package/Type').first.content
   end
 
+  def format
+    @xml.xpath('/SPM/Package/Format').first.content
+  end
+
   def hash
     @xml.xpath('/SPM/Package/Hash').first.content
   end
