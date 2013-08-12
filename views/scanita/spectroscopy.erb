@@ -89,5 +89,15 @@
 		<% end %>
 		</table>
 		</div>
+		
+		<div class="twocol">
+			<div style="width:800px;margin:0 auto">
+			<% name = 'Inverse tunneling rate' %>
+			<% image = sdf.images.select {|f| f.title == name && f.direction == direction}.first %>
+			<% if image %>
+				<%= svg_tag(image) %>
+			<% end %>
+			</div>
+		</div>
 	</div>
 <% end %>
