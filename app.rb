@@ -132,6 +132,7 @@ get '*' do
     @path = params[:splat][0] 
     erb :index, :layout => :html5
   else
+
     redirect settings.file_server + path.gsub(settings.dir,'')
   end
 end
@@ -146,7 +147,7 @@ helpers do
   end
     
   def list_file(path)
-    return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(settings.dir,'')}
+    return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(settings.dir.chomp('/'),'/')}
   end
 
   def path(url=request.fullpath)
