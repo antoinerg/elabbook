@@ -21,6 +21,7 @@ require './models/nanonis.rb'
 require './lib/find.rb'
 
 class Elabbook < Sinatra::Base
+  disable :protection
 register Sinatra::ConfigFile
 config_file 'config/config.yml'
 
