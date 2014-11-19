@@ -146,7 +146,7 @@ class Elabbook < Sinatra::Base
     end
 
     def list_file(path)
-      return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(settings.dir.chomp('/'),'')}
+      return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(/^#{settings.dir.chomp('/')}/,'')}
     end
 
     def path(url=request.fullpath)
