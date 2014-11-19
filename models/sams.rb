@@ -1,5 +1,3 @@
-config_file File.join( [settings.root, 'config', 'config.yml'] )
-
 class Sams < Sample
   def self.all
     super('/data/sample_preparation/sams')

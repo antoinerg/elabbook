@@ -14,9 +14,9 @@ require 'json_builder'
 require './models/spm.rb'
 require './models/sdf.rb'
 require './models/sdf_image.rb'
+require './models/nanonis.rb'
 require './models/sample.rb'
 require './models/sams.rb'
-require './models/nanonis.rb'
 
 require './lib/find.rb'
 
@@ -24,8 +24,12 @@ class Elabbook < Sinatra::Base
   register Sinatra::ConfigFile
   config_file 'config/config.yml'
 
+  $settings = settings
+
   register Sinatra::Partial
   set :partial_template_engine, :erb
+
+  set :absolute_redirects, false
 
   get /^\/data\/lt-afm\/nanonis\/.*(dat|sxm)$/ do
     @path = request.fullpath + ".xml"
@@ -132,7 +136,7 @@ class Elabbook < Sinatra::Base
       @path = params[:splat][0]
       erb :index, :layout => :html5
     else
-      redirect settings.file_server + path.gsub(settings.dir,'')
+      redirect settings.file_server + path.gsub(/^#{settings.dir}/,'')
     end
   end
 
@@ -155,11 +159,11 @@ class Elabbook < Sinatra::Base
     end
 
     def url(filepath)
-      "/" + filepath.gsub(settings.dir,'')
+      "/" + filepath.gsub(/^#{settings.dir}/,'')
     end
 
     def url_cdn(p)
-      settings.file_server + p.gsub(settings.dir,'')
+      settings.file_server + p.gsub(/^#{settings.dir}/,'')
     end
 
     def svg_tag(image,html_class='')

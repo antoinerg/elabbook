@@ -3,7 +3,7 @@ class Sample
   
   def self.all(path)
     logs = [];
-    find(File.join(settings.dir,path)) do |f|
+    find(File.join($settings.dir,path)) do |f|
       if f.match(/.*log.xml$/)
         logs << Sams.new(f)
       end
