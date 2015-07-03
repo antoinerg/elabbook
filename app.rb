@@ -28,8 +28,8 @@ class Elabbook < Sinatra::Base
   config_file 'config/config.yml'
 
   $settings = settings
-  settings_dir = ENV["DIR"]
-  settings_file_server = ENV["FILE_SERVER"]
+  $settings_dir = ENV["DIR"]
+  $settings_file_server = ENV["FILE_SERVER"]
 
   register Sinatra::Partial
   set :partial_template_engine, :erb
@@ -165,7 +165,7 @@ class Elabbook < Sinatra::Base
       @path = params[:splat][0]
       erb :index, :layout => :html5
     else
-      redirect settings_file_server + path.gsub(/^#{settings_dir}/,'')
+      redirect $settings_file_server + path.gsub(/^#{$settings_dir}/,'')
     end
   end
 
@@ -179,20 +179,20 @@ class Elabbook < Sinatra::Base
     end
 
     def list_file(path)
-      return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(/^#{settings_dir.chomp('/')}/,'')}
+      return Dir.entries(path).sort[2..-1].collect {|f| File.join(path,f).gsub(/^#{$settings_dir.chomp('/')}/,'')}
     end
 
     def path(url=request.fullpath)
-      root = settings_dir
+      root = $settings_dir
       path = File.join(root,url)
     end
 
     def url(filepath)
-      "/" + filepath.gsub(/^#{settings_dir}/,'')
+      "/" + filepath.gsub(/^#{$settings_dir}/,'')
     end
 
     def url_cdn(p)
-      settings_file_server + p.gsub(/^#{settings_dir}/,'')
+      $settings_file_server + p.gsub(/^#{$settings_dir}/,'')
     end
 
     def svg_tag(image,html_class='')
