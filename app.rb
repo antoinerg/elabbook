@@ -21,18 +21,40 @@ require './models/sams.rb'
 require './lib/find.rb'
 
 class Elabbook < Sinatra::Base
+  before do
+    headers "Cache-Control" => "max-age=3600"
+  end
   register Sinatra::ConfigFile
   config_file 'config/config.yml'
 
   $settings = settings
+  settings.dir = ENV["DIR"] || settings.dir
+  settings.file_server = ENV["FILE_SERVER"] || settings.file_server
 
   register Sinatra::Partial
   set :partial_template_engine, :erb
 
   set :absolute_redirects, false
 
-  get /^\/data\/lt-afm\/nanonis\/.*(dat|sxm)$/ do
-    @path = request.fullpath + ".xml"
+  get /^\/data\/lt-afm\/nanonis\/[^\/]+\/report/ do
+    headers "Cache-Control" => "no-cache"
+    @path = request.fullpath.gsub("report","raw")
+    @folder = path(@path)
+    Dir.chdir(@folder) do
+      @nanonises = Dir.entries(@folder).sort.select {|f| f.match(/.*xml$/)}.collect do |f|
+        #Nanonis.new(@folder + "/" + f)
+        url(@folder + "/" + f.gsub('.xml',''))
+      end
+    end
+
+    #@nanonises.sort_by! {|n| n.datetime}
+    #@day = DateTime.iso8601(params[:day])
+    erb :"nanonis/report", :layout => :html5
+
+  end
+
+  get /^\/data\/lt-afm\/nanonis\/.*(dat|sxm)(\/partial)?$/ do
+    @path = request.fullpath.gsub('/partial','') + ".xml"
     @nanonis = Nanonis.new(path(@path))
 
     # Provide link to next data file in same folder
@@ -41,7 +63,13 @@ class Elabbook < Sinatra::Base
     @next_url = files.fetch(id+1,files[0])
     @previous_url = files.fetch(id-1)
 
-    erb :nanonis, :layout => :html5
+    partial = (params['captures'][1]=="/partial")
+
+    if partial
+      erb :nanonis, :layout => nil
+    else
+      erb '<!--# include virtual="<%=request.fullpath%>/partial" wait="yes" -->', :layout => :html5
+    end
   end
 
   get '/data/sample_preparation/*/log.xml' do
@@ -117,6 +145,7 @@ class Elabbook < Sinatra::Base
   end
 
   get '*.erb.html' do
+    #headers "Cache-Control" => "no-cache"
     path = path(request.fullpath)
     if File.exists?(path)
       tmpl = File.read(path)
