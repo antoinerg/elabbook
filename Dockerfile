@@ -11,7 +11,7 @@ ADD Gemfile /opt/app/
 ADD Gemfile.lock /opt/app/
 
 # Install dependencies
-RUN cd /opt/app; /usr/bin/bundle install --binstubs # --deployment
+RUN cd /opt/app; bundle install --binstubs # --deployment
 
 # Add src
 ADD . /opt/app
