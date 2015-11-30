@@ -1,8 +1,6 @@
 <% @nanonis ||= nanonis %>
 <%= partial :"nanonis/header", :locals => {nanonis: @nanonis} %>
-<%= partial :"nanonis/spectroscopy", :locals => {nanonis: @nanonis} %>
-
-<%= partial :"_editor", :locals => {url: "#{request.fullpath}.xml"} %>
+<%= partial :"nanonis/#{@nanonis.format}", :locals => {nanonis: @nanonis} %>
 
 <script type="text/javascript">
 		var isAlt = true;

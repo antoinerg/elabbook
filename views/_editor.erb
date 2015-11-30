@@ -15,7 +15,9 @@
 		// Loading file
 		$.ajax({
 		  type: "GET",
-		  url: '/api<%=url%>',
+		  //url: '/api<%=url%>',
+		  url: '<%=File.join($settings_file_server,url)%>',
+		  dataType: "text",
 		  success: function(data) {editor.getSession().setValue(data);editor.blur();}
 		});
 		
@@ -26,7 +28,9 @@
 		    exec: function(editor) {
 		      $.ajax({
 			    type: "PUT",
-			    url: '/api<%=url%>',
+			    //url: '/api<%=url%>',
+		  		url: '<%=File.join($settings_file_server,url)%>',
+		  		dataType: "text",
 			    data: editor.getSession().getValue(),
 			    success: function(data) {console.log('Saved');humanMsg.displayMsg('Saved changes');}
 			}); 

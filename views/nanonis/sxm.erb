@@ -1,0 +1,7 @@
+<h2>Images</h2>
+<% %w(Forward Backward).each do |direction| %>
+<div class="row">
+<h2><%= direction %></h2>
+<%= partial :"nanonis/scan_img", :locals => {nanonis: nanonis, direction: direction} %>
+</div>
+<% end %>
