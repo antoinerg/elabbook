@@ -1,8 +1,26 @@
 <% @nanonis ||= nanonis %>
-<%= partial :"nanonis/header", :locals => {nanonis: @nanonis} %>
-<%= partial :"nanonis/#{@nanonis.format}", :locals => {nanonis: @nanonis} %>
+<%= partial :"nanonis/header", :locals => {nanonis: @nanonis, res_curve: @res_curve} %>
+
+<% case @nanonis.format when "nanonisspectrum" %>
+	<%= partial :"nanonis/nanonisspectrum", :locals => {nanonis: @nanonis, res_curve: @res_curve} %>
+<% when "sxm" %>
+	<%= partial :"nanonis/#{@nanonis.format}", :locals => {nanonis: @nanonis, res_curve: @res_curve} %>
+<% end %>
+
+<%= partial :"_editor", :locals => {url: "#{request.fullpath}.xml"} %>
 
 <script type="text/javascript">
+
+	$.get('../raw.json', function(d) {
+			//console.log(d);
+			var i = d.findIndex(function(element,index,array) {
+				if (element.filename == '<%=@nanonis.filename%>') {
+					return true;
+				}
+				return false;
+			})
+			console.log(i);
+		
 		var isAlt = true;
 
 		$(document).keyup(function (e) {
@@ -10,10 +28,12 @@
 		}).keydown(function (e) {
 			if(e.which == 18) isAlt=true;
 			if(e.which == 39) {
-				window.location.assign('<%= @next_url || '#' %>');
+				window.location.assign(d[i+1].filename);
 			}
 			if(e.which == 37) {
-				window.location.assign('<%= @previous_url || '#' %>');
+				window.location.assign(d[i-1].filename);
 			}
 		});
+
+	})
 </script>

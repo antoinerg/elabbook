@@ -12,8 +12,9 @@
 
 	<div style="float:right">
 		<ul id="parameters">
-			<li><%= nanonis.xml.xpath('/SPM/Package/Header/pressure')[0] || '#'%> mbar</li>
-			<li><%= nanonis.xml.xpath('/SPM/Package/Header/temperature')[0] || '#'%>K</li>
+			<li>V=<%= nanonis.xml.xpath('/SPM/Package/Header/bias_bias__v_') || '#'%></li>
+			<li>Q=<%= nanonis.q_factor %></li>
+			<li>osc=<%= nanonis.oscillation_amplitude %> m</li>
 		</ul>
 	</div>
 </div>

@@ -1,0 +1,43 @@
+<style>
+	img {width:100%}
+	pre {font-size:12px;}
+</style>
+<div class="row">
+<h1>Compute-Matlab</h1>
+<%= @vars["compute"]["hash"] %>
+
+
+<h2>Table of contents</h2>
+<ul>
+<li><a href="#info">Info</a></li>
+<li><a href="#figures">Figures</a></li>
+<li><a href="#files">List of files</a></li>
+</ul>
+
+<h2 id="info">Info</h2>
+<% @vars["compute"].each do |k,v| %>
+<li><b><%= k %></b> : <%= v %></li>
+<% end %>
+
+<h2 id="figures">Figures</h2>
+<% @vars["files"].each do |file| %>
+<% if file.match("svg") %>
+	<img src="<%= file %>"/><br/>
+<% end %>
+<% end %>
+
+<h2 id="files">List of files</h2>
+<ul>
+<%@vars["files"].each do |file| %>
+<li><a href="<%=file%>"><%= file.match(/([^\/]*)$/)[0] %></a></li>
+<%end%>
+</ul>
+
+<h2>Script</h2>
+Input: <%=@vars["compute"]["params"]%>
+<% begin %>
+<pre><%= RestClient.get(@vars["compute"]["cmd"]) %></pre>
+<% rescue %>
+<pre>Can't download script</pre>
+<% end %>
+</div>

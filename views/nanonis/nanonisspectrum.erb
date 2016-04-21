@@ -1,10 +1,11 @@
-<div class="row">
-<h2>Images</h2>	
-	<div class="twocol">
-		<% if nanonis.images %>
-		<% nanonis.images.each do |image| %>
-			<%= svg_tag(image) %>
-		<% end %>
-		<% end %>
-	</div>
-</div>
+<style>
+figcaption {display:none;}
+</style>
+<% case @nanonis.type %>
+<% when "bias spectroscopy" %>
+	<% ["Forward","Backward"].each do |direction| %>
+		<%= partial :"nanonis/bias_spectrum", :locals => {nanonis: @nanonis, res_curve: @res_curve, direction: direction} %>
+	<% end %>
+<% when "Frequency Sweep" %>
+	<%= partial :"nanonis/res_curve", :locals => {nanonis: @nanonis, res_curve: @res_curve} %>
+<% end %>

@@ -1,9 +1,13 @@
 div.container {
-  max-width:1000px;
-  width:1000px;
+  max-width:1700px;
   margin:0 auto;
-  padding:25px;
+  padding:0px 25px;
+  /* 
+  padding: 25px;
+  */
 }
+
+@media
 
 div.page-break {
   page-break-before:always;
@@ -59,7 +63,7 @@ ul#parameters li {
 	width: 100%;
 	margin: 10px auto;
 	overflow: hidden;
-  page-break-inside:avoid;
+  /*age-break-inside:avoid;*/
 }
 
 .onecol {
@@ -172,10 +176,13 @@ p {
 figure.one-third {width:33%;float:left;}
 figure.one-half {width:50%;float:left;}
 
+figure object {width:100%;}
+
 @media print 
 {
 .noprint {display:none;}
 #container {padding:0px;margin:0;}
+.container {width:1000px;}
 body {margin:0;padding:0;}
 @page {margin: 5mm;}
 }

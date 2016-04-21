@@ -1,4 +1,4 @@
-class SDFImage
+class SpmImage
   attr_reader :xml, :xml_path, :svg_path, :png_path
 
   def initialize(path)

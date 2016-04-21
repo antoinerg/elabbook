@@ -3,7 +3,7 @@ class Sample
   
   def self.all(path)
     logs = [];
-    find(File.join($settings.dir,path)) do |f|
+    find(File.join($settings_dir,path)) do |f|
       if f.match(/.*log.xml$/)
         logs << Sams.new(f)
       end
@@ -43,7 +43,7 @@ class Sample
     if File.directory?(image_dir)
       images = Dir.entries(image_dir).sort.select {|f| f.match(".*xml$")}
       images.collect! do |img_xml|
-        SDFImage.new(File.join(image_dir,img_xml))
+        SpmImage.new(File.join(image_dir,img_xml))
       end
     else
       images = nil;

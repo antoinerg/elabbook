@@ -3,7 +3,7 @@
 	<h1 class="entry-title">
 	<% loc="/" %>
 	<% (@path.split('/')[1..-1] || [""]).each do |d|%>
-		<a style="color:black;" href="<%=loc + d%>"><%=d%></a>/
+		<a style="color:black;" href="<%=loc + d%>/"><%=d%></a> /
 		<% loc = loc + d + '/'%>
 	<% end %>
 	</h1>

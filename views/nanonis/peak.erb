@@ -1,0 +1,69 @@
+<% nanonis ||= @nanonis %>
+<%= partial :"nanonis/header", :locals => {nanonis: nanonis, res_curve: @res_curve} %>
+<% peak_images = nanonis.find_images_in("../analysis/spectrumdb/#{nanonis.filename}#{params[:index]}/") %>
+
+
+<div class="row">
+	<div class="onecol">
+		<% image = peak_images.select {|f| f.title == 'Normalized excitation compiled'}.first %>
+		<% if image %>
+			<%= svg_tag(image) %>
+		<% end %>
+	</div>
+	<div class="onecol last">
+		<% image = peak_images.select {|f| f.title == 'Normalized excitation with background'}.first %>
+		<% if image %>
+			<%= svg_tag(image) %>
+		<% end %>
+	</div>
+</div>
+<div class="row">
+	<div class="onecol">
+	<h2>Forward</h2>	
+	<% ['Parabolic fit - Zoom','Peak - Wide','Peak - Zoom'].each do |name| %>
+		<% image = peak_images.select {|f| f.title == name && f.direction == "Forward"}.first %>
+		<% if image %>
+			<%= svg_tag(image) %>
+		<% end %>
+	<% end %>
+	</div>
+
+	<div class="onecol last">
+	<h2>Backward</h2>	
+	<% ['Parabolic fit - Zoom','Peak - Wide','Peak - Zoom'].each do |name| %>
+		<% image = peak_images.select {|f| f.title == name && f.direction == "Backward"}.first %>
+		<% if image %>
+			<%= svg_tag(image) %>
+		<% end %>
+	<% end %>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$.get('../../raw.json', function(d) {
+			//console.log(d);
+			var i = d.findIndex(function(element,index,array) {
+				if (element.filename == '<%=@nanonis.filename%>') {
+					return true;
+				}
+				return false;
+			})
+			console.log(i);
+		
+		var isAlt = true;
+
+		$(document).keyup(function (e) {
+			if(e.which == 18) isAlt=false;
+		}).keydown(function (e) {
+			if(e.which == 18) isAlt=true;
+			if(e.which == 39) {
+				window.location.assign('../' + d[i+1].filename + '/peak');
+			}
+			if(e.which == 37) {
+				window.location.assign('../' + d[i-1].filename + '/peak');
+			}
+		});
+
+	})
+</script>

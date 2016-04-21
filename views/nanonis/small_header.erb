@@ -1,0 +1,13 @@
+<div class="row small">
+	<div class="onecol">
+		<h3 class="entry-title"><%= nanonis.filename %></h3>
+	</div>
+
+	<div class="onecol last">
+		<ul id="parameters">
+			<li>V=<%= nanonis.xml.xpath('/SPM/Package/Header/bias_bias__v_') || '#'%></li>
+			<li>ampl=<%= nanonis.xml.xpath('/SPM/Package/Header/oscillation_control_amplitude_setpoint__m_') || '#'%> m</li>
+			<li>Q=<%= nanonis.xml.xpath('/SPM/Package/Header/q')[0] || nanonis.xml.xpath('/SPM/Package/Header/oscillation_control_pll_setup_q_factor') || '#'%></li>
+		</ul>
+	</div>
+</div>

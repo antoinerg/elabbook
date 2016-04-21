@@ -1,0 +1,8 @@
+<% @nanonis ||= nanonis %>
+<div class="row">
+	<div class="twocol">
+	<% @nanonis.images.each do |image| %>
+		<%= svg_tag(image) %>
+	<% end %>
+	</div>
+</div>

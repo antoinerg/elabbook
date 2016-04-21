@@ -1,5 +1,5 @@
 <div class="twocol">
-<% ['Topography', 'Frequency shift flatten', 'Excitation flatten'].each do |name| %>
+<% ['Topography', 'Frequency Shift', 'Excitation'].each do |name| %>
 	<% image = nanonis.images.select {|f| f.title == name && f.direction == direction}.first %>
 	<% if image %>
 		<%= png_tag(image,'one-third') %>

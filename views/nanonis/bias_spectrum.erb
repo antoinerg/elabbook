@@ -1,0 +1,21 @@
+<% direction ||= @direction ||= 'Forward' %>
+<h2><%= direction %></h2>	
+<div class="row">
+	<div class="onecol">
+	<% ['Excitation','Normalized excitation with background','Dissipation','Amplitude'].each do |name| %>
+		<% image = nanonis.images.select {|f| f.title == name && f.direction == direction}.first %>
+		<% if image %>
+			<%= png_tag(image) %>
+		<% end %>
+	<% end %>
+	</div>
+
+	<div class="onecol last">
+	<% ['Frequency Shift','Frequency shift and Parabolic fit 20Hz from top','Difference between Frequency Shift and Parabolic fit 20Hz from top | SMOOTHED'].each do |name| %>
+		<% image = nanonis.images.select {|f| f.title == name && f.direction == direction}.first %>
+		<% if image %>
+			<%= png_tag(image) %>
+		<% end %>
+	<% end %>
+	</div>
+</div>

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>elabbook</title>
 <link href='/css/reset.css' rel='stylesheet' type='text/css' />
 <link href='/css/humanmsg.css' rel='stylesheet' type='text/css' />
-<link href='/css/style.css' rel='stylesheet' type='text/css' />
+<link href='/css/style.css?fp=asdasdefsssasdfsd21ff' rel='stylesheet' type='text/css' />
 <script src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 <!--
 <script src='/js/cufon-yui.js'></script>
@@ -16,11 +17,16 @@
     window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')
   //]]>
 </script>
-
+<style>
+p.generation {
+	float:left;
+}
+</style>
 </head>
 <body>
 <div class="container">
 <%= yield %>
+<p class="generation">Compiled at <%=Time.now%></p>
 </div>
 <script type="text/javascript">
 /*

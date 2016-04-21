@@ -16,4 +16,4 @@ RUN cd /opt/app; bundle install --binstubs # --deployment
 # Add src
 ADD . /opt/app
 
-CMD ["/opt/app/bin/thin","-c","/opt/app","-e","development","-p","4000","start"]
+CMD ["/opt/app/bin/thin","-c","/opt/app","-e","production","-p","80","start"]
